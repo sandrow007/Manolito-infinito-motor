@@ -21,11 +21,103 @@
       Calcula la conductividad térmica ponderada y el presupuesto de cualquier
       mezcla de materiales, detecta materiales automáticamente en fotos o vídeo,
       y traduce el resultado a un circuito cuántico de 2 qubits. Todo corre en
-      tu navegador — sin servidor, sin instalar nada, sin conexión a IBM.
+      tu navegador — sin servidor, sin instalar nada.
     </p>
+    <nav class="section-nav">
+      <a href="#sobre-proyecto">Sobre el proyecto</a>
+      <a href="#calculadora">Calculadora</a>
+      <a href="#impacto-radiacion">Impacto de la radiación</a>
+      <a href="#honestidad">Honestidad de los datos</a>
+      <a href="#version-profesional">Versión profesional (IBM Quantum)</a>
+    </nav>
   </header>
 
-  <div class="grid-main">
+  <!-- ================= SOBRE EL PROYECTO ================= -->
+  <section class="panel about-panel" id="sobre-proyecto">
+    <div class="panel-label">Sobre el proyecto</div>
+    <h2 class="about-title">¿Qué es Manolito Infinito?</h2>
+    <p class="about-text">
+      Manolito Infinito es una herramienta que calcula cómo se comporta
+      térmicamente cualquier superficie —una fachada, un tejado, una calle,
+      una pieza industrial— según de qué materiales está hecha. Te dice
+      cuánto calor pasa a través de ella, cuánto costaría construirla con esos
+      materiales, y además traduce ese resultado a un pequeño circuito
+      cuántico simulado, como una segunda forma —más visual y experimental—
+      de leer la estabilidad térmica del conjunto.
+    </p>
+
+    <h3 class="about-sub">¿Por qué nace este proyecto?</h3>
+    <p class="about-text">
+      La idea nació de una observación muy simple, casi nocturna: caminando de
+      noche por el asfalto todavía caliente horas después de que se fuera el
+      sol, se hace evidente que ese negro no es un detalle estético — es una
+      trampa térmica. El asfalto absorbe una barbaridad de radiación solar
+      durante el día y la libera muy lentamente durante la noche, y esa simple
+      idea —qué material elijamos cambia cuánto calor acumula y libera una
+      ciudad entera— es la semilla de todo este motor. De ahí surgió la
+      pregunta de fondo: si pudiéramos calcular y comparar materiales de forma
+      rápida y visual, ¿podríamos tomar mejores decisiones antes de construir?
+    </p>
+
+    <h3 class="about-sub" id="impacto-radiacion">Impacto de la radiación y el calor en los materiales</h3>
+    <p class="about-text">
+      Cada material absorbe, refleja y libera la energía del sol de forma muy
+      distinta. Dos factores lo explican:
+    </p>
+    <ul class="about-list">
+      <li><strong>Albedo (reflectividad):</strong> las superficies claras
+        (hormigón claro, piedra caliza) reflejan buena parte de la radiación
+        solar; las oscuras (asfalto, tejados negros) la absorben casi toda.</li>
+      <li><strong>Conductividad térmica (k):</strong> una vez absorbido el
+        calor, unos materiales lo transmiten y liberan rápido (metales) y
+        otros lo retienen durante horas (asfalto, hormigón masivo), lo que
+        alarga la noche calurosa mucho después de ponerse el sol.</li>
+    </ul>
+    <p class="about-text">
+      Esta combinación es una de las causas principales del llamado
+      <em>efecto isla de calor urbano</em>: ciudades enteras con demasiado
+      asfalto y hormigón oscuro que de noche literalmente no bajan de
+      temperatura al ritmo que debieran. Elegir mejor los materiales —o al
+      menos entender su comportamiento antes de decidir— tiene un impacto real
+      en el confort, el gasto energético y la salud de quien vive ahí. Ese es
+      el problema serio detrás de un motor que, a simple vista, solo hace
+      cuentas de conductividad.
+    </p>
+
+    <h3 class="about-sub" id="honestidad">Honestidad sobre la precisión de los análisis</h3>
+    <p class="about-text">
+      El detector automático de materiales por imagen/vídeo no es infalible,
+      y no pretendemos que lo parezca. En las primeras versiones, el brillo
+      del sol en una foto se confundía con aluminio (ambos son zonas muy
+      brillantes y poco saturadas de color) — un fallo real que detectamos y
+      corregimos con un filtro específico de sobreexposición. Desde entonces
+      las detecciones son notablemente más precisas, aunque siguen siendo una
+      <strong>estimación por color</strong>, no un análisis de laboratorio: no
+      son correctas al 100% y no deben usarse como sustituto de un ensayo de
+      materiales certificado. Los cálculos térmicos y de presupuesto, en
+      cambio, son matemática determinista (las mismas fórmulas de ingeniería
+      del motor original) y no dependen de ninguna estimación visual —esos
+      números son tan fiables como los datos de conductividad y coste que
+      alimentan el sistema.
+    </p>
+
+    <h3 class="about-sub" id="version-profesional">Versión profesional con conexión real a IBM Quantum</h3>
+    <p class="about-text">
+      Esta versión web reproduce matemáticamente el mismo circuito cuántico
+      (puerta RY + CNOT sobre 2 qubits) que el motor original en Python, pero
+      lo simula localmente en tu navegador, sin conexión a ningún servicio
+      externo. El motor original de escritorio, en cambio, sí puede
+      ejecutarse contra <strong>hardware cuántico real de IBM Quantum</strong>
+      a través de Qiskit, para quien quiera ir un paso más allá de la
+      simulación. Si te interesa esa versión profesional —con ejecución en
+      qubits reales, no solo simulados— escríbeme a
+      <a href="mailto:sandro.a007@gmail.com">sandro.a007@gmail.com</a> y lo
+      hablamos.
+    </p>
+  </section>
+  <!-- ================= FIN SOBRE EL PROYECTO ================= -->
+
+  <div class="grid-main" id="calculadora">
 
     <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
     <div>
