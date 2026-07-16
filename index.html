@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manolito Infinito — Motor Industrial Térmico-Cuántico</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="blueprint-frame">
+  <span class="corner-mark tl"></span>
+  <span class="corner-mark tr"></span>
+  <span class="corner-mark bl"></span>
+  <span class="corner-mark br"></span>
+
+  <header class="hero">
+    <div class="hero-eyebrow">Motor industrial térmico-cuántico &nbsp;·&nbsp; v1.0 web</div>
+    <h1 class="hero-title">Manolito Infinito</h1>
+    <p class="hero-sub">
+      Calcula la conductividad térmica ponderada y el presupuesto de cualquier
+      mezcla de materiales, detecta materiales automáticamente en fotos o vídeo,
+      y traduce el resultado a un circuito cuántico de 2 qubits. Todo corre en
+      tu navegador — sin servidor, sin instalar nada, sin conexión a IBM.
+    </p>
+  </header>
+
+  <div class="grid-main">
+
+    <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
+    <div>
+      <div class="panel">
+        <div class="panel-label">01 · Área y condiciones</div>
+        <label class="field-label">Área (m²)</label>
+        <input type="number" id="input-area" value="100" min="1" step="1">
+        <div style="height:10px"></div>
+        <label class="field-label">Diferencia de temperatura ΔT (°C)</label>
+        <input type="number" id="input-tempdiff" value="20" min="0" step="1">
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">02 · Mezcla de materiales (manual)</div>
+        <div id="material-selector"></div>
+        <div class="mix-total" id="mix-total">Suma actual: 0% (debe ser 100%)</div>
+        <div class="btn-row">
+          <button class="btn" id="btn-autorrellenar">Repartir % iguales</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">03 · Detección automática (imagen / vídeo)</div>
+        <div class="dropzone" id="dropzone">
+          Arrastra una foto o vídeo aquí, o haz clic para elegir archivo
+          <input type="file" id="file-input" accept="image/*,video/*">
+        </div>
+        <div id="preview-container" style="margin-top:12px"></div>
+        <div class="detected-tags" id="detected-tags"></div>
+        <div class="btn-row">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);font-family:var(--font-mono)">
+            <input type="checkbox" id="usar-deteccion" disabled>
+            Usar materiales detectados en el cálculo
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" id="btn-calcular">Calcular k_final · Budget · Quantum</button>
+      </div>
+
+      <div class="panel" style="margin-top:20px">
+        <div class="panel-label">Registro</div>
+        <div class="status-log" id="status-log"></div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: RESULTADOS + MANOLITO -->
+    <div>
+      <div class="panel" id="resultados-panel" style="display:none">
+        <div class="panel-label">Resultado térmico</div>
+        <div class="k-readout" id="k-readout">— <span class="unit">W/(m·K)</span></div>
+        <div class="thermo-gauge">
+          <div class="thermo-needle" id="thermo-needle" style="left:0%"></div>
+        </div>
+        <div class="thermo-labels"><span>Frío / aislante</span><span>Alta conductividad</span></div>
+
+        <div class="result-grid">
+          <div class="result-card"><div class="rc-label">Budget total</div><div class="rc-value" id="result-budget">—</div></div>
+          <div class="result-card"><div class="rc-label">Flujo térmico</div><div class="rc-value" id="result-flux">—</div></div>
+          <div class="result-card"><div class="rc-label">Eficiencia</div><div class="rc-value" id="result-efficiency">—</div></div>
+          <div class="result-card"><div class="rc-label">Theta (RY)</div><div class="rc-value" id="result-theta">—</div></div>
+          <div class="result-card"><div class="rc-label">Estabilidad |00&gt;</div><div class="rc-value" id="result-estabilidad">—</div></div>
+        </div>
+        <div id="result-nivel" style="margin-top:10px;font-family:var(--font-mono);font-size:13px"></div>
+
+        <div class="qcircuit">
+          <div class="panel-label" style="margin-bottom:8px">Circuito: RY(θ) → CNOT → Medición</div>
+          <div class="qbars" id="qbars"></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="btn-export-json">Exportar JSON</button>
+          <button class="btn" id="btn-export-csv">Exportar CSV</button>
+          <button class="btn" id="btn-export-pdf">Exportar PDF</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-label">Manolito Infinito — consulta</div>
+        <div class="chat-window" id="chat-window">
+          <div class="chat-msg">
+            <div class="who">Manolito</div>
+            <div>Buenas, compadre! Pregúntame por k_final, budget, lo cuántico, la estabilidad o el filtro anti-sol.</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Escribe tu pregunta...">
+          <button class="btn" id="chat-send">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Manolito Infinito · Motor Industrial Térmico-Cuántico · 100% cliente, sin backend</footer>
+</div>
+
+<script src="js/constants.js"></script>
+<script src="js/thermal.js"></script>
+<script src="js/detector.js"></script>
+<script src="js/quantum.js"></script>
+<script src="js/manolito.js"></script>
+<script src="js/export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
