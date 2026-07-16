@@ -18,9 +18,16 @@
       background: var(--paleta-fondo);
       transition: opacity 0.8s ease;
       display: flex; align-items: center; justify-content: center;
+      overflow: hidden; /* Evita scrolls accidentales por elementos flotantes */
     }
     #intro-overlay.oculto { opacity: 0; pointer-events: none; }
-    #aether-field { position: absolute; inset: 0; z-index: 1; }
+    
+    #aether-field, #waves-canvas { 
+      position: absolute; top: 0; left: 0; 
+      width: 100%; height: 100%; 
+    }
+    #aether-field { z-index: 1; }
+    #waves-canvas { z-index: 15; pointer-events: none; }
 
     #intro-logo {
       position: absolute;
@@ -38,12 +45,6 @@
       width: 100%; height: 100%; display: block;
     }
 
-    #waves-canvas {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 25; pointer-events: none;
-    }
-
     #lens {
       position: absolute; pointer-events: none;
       width: 30px; height: 30px;
@@ -52,8 +53,8 @@
       background: radial-gradient(circle, rgba(197,160,89,0.4) 0%, transparent 80%);
       box-shadow: 0 0 10px var(--paleta-dorado);
       z-index: 30; mix-blend-mode: screen; overflow: hidden;
-      left: 0; top: 0;
-      opacity: 0; /* Oculto inicialmente para no quedar flotando fuera del logo */
+      left: -50px; top: -50px; /* Fuera de la vista inicial */
+      opacity: 0;
       transition: opacity 0.2s ease;
     }
     #lens::before {
@@ -101,6 +102,8 @@
 <!-- INTRO -->
 <div id="intro-overlay">
   <canvas id="aether-field"></canvas>
+  <canvas id="waves-canvas"></canvas>
+  <div id="lens"></div>
   <div id="intro-logo" title="Arrastra, gira con la rueda, doble clic para entrar">
     <svg viewBox="0 0 200 300">
       <circle cx="100" cy="150" r="45" stroke="var(--paleta-dorado)" stroke-width="2" fill="none" />
@@ -108,8 +111,6 @@
       <path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
       <path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
     </svg>
-    <canvas id="waves-canvas"></canvas>
-    <div id="lens"></div>
   </div>
 </div>
 
@@ -236,21 +237,7 @@
   const paletas = [
     { dorado: '#C5A059', teal: '#007A87', granate: '#7A0016' },
     { dorado: '#B8860B', teal: '#2E8B57', granate: '#8B0000' },
-    { dorado: '#DAA520', teal: '#008080', granate: '#800020' },
-    { dorado: '#CFB53B', teal: '#317873', granate: '#722F37' },
-    { dorado: '#E6C200', teal: '#0F4C5C', granate: '#660000' },
-    { dorado: '#AA7A39', teal: '#006D6F', granate: '#5E1914' },
-    { dorado: '#D4AF37', teal: '#1A7A7A', granate: '#4A0E0E' },
-    { dorado: '#C9A84C', teal: '#1F6A6A', granate: '#6E1A1A' },
-    { dorado: '#B7994A', teal: '#0E5E5E', granate: '#571515' },
-    { dorado: '#CBA135', teal: '#1E5F5F', granate: '#4B1010' },
-    { dorado: '#BC9A3C', teal: '#1F5C5C', granate: '#5A1212' },
-    { dorado: '#A68A3C', teal: '#1B5B5B', granate: '#511111' },
-    { dorado: '#C4A44A', teal: '#1E5B5B', granate: '#4D0F0F' },
-    { dorado: '#B8953A', teal: '#1F5858', granate: '#501212' },
-    { dorado: '#D1AD4D', teal: '#1D6262', granate: '#4A0E0E' },
-    { dorado: '#C2A256', teal: '#1C5D5D', granate: '#501515' },
-    { dorado: '#BD9B44', teal: '#1D6060', granate: '#4C1111' }
+    { dorado: '#DAA520', teal: '#008080', granate: '#800020' }
   ];
   const p = paletas[Math.floor(Math.random() * paletas.length)];
   document.documentElement.style.setProperty('--paleta-dorado', p.dorado);
@@ -261,7 +248,7 @@
   const canvasFondo = document.getElementById('aether-field');
   const ctxFondo = canvasFondo.getContext('2d');
   let particles = [];
-  function resizeFondo() { canvasFondo.width = innerWidth; canvasFondo.height = innerHeight; }
+  function resizeFondo() { canvasFondo.width = window.innerWidth; canvasFondo.height = window.innerHeight; }
   resizeFondo(); window.addEventListener('resize', resizeFondo);
   for (let i = 0; i < 100; i++) particles.push({ x: Math.random()*canvasFondo.width, y: Math.random()*canvasFondo.height, size: Math.random()*1.5, speed: Math.random()*0.5 });
   function drawParticles() {
@@ -275,15 +262,16 @@
   }
   drawParticles();
 
-  // ===== LOGO, LUPA Y ONDAS =====
+  // ===== ONDAS (CANVAS FULLSCREEN AHORA) =====
   const logo = document.getElementById('intro-logo');
   const lens = document.getElementById('lens');
   const wavesCanvas = document.getElementById('waves-canvas');
   const ctxWaves = wavesCanvas.getContext('2d');
 
   function updateWavesSize() {
-    wavesCanvas.width = logo.offsetWidth;
-    wavesCanvas.height = logo.offsetHeight;
+    // AHORA EL CANVAS MIDE TODA LA PANTALLA, NO SOLO 120X180
+    wavesCanvas.width = window.innerWidth;
+    wavesCanvas.height = window.innerHeight;
   }
   updateWavesSize();
   window.addEventListener('resize', updateWavesSize);
@@ -291,8 +279,6 @@
   const glyphs = [
     'ა','ბ','გ','დ','ე','ვ','ზ','თ','ი','კ','ლ','მ','ნ','ო','პ','ჟ','რ','ს','ტ','უ','ფ','ქ','ღ','ყ','შ','ჩ','ც','ძ','წ','ჭ','ხ','ჯ','ჰ',
     'α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','τ','υ','φ','χ','ψ','ω',
-    'A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','V','X','Y','Z',
-    'ܐ','ܒ','ܓ','ܕ','ܗ','ܘ','ܙ','ܚ','ܛ','ܝ','ܟ','ܠ','ܡ','ܢ','ܣ','ܥ','ܦ','ܨ','ܩ','ܪ','ܫ','ܬ',
     '{','}','[',']','(',')','<','>','/','\\','|','&','!','?','#','@','*','+','-','=', '%', ';', ':', '"', "'"
   ];
   let waveParticles = [];
@@ -301,7 +287,7 @@
   function createWaveParticle(x, y) {
     const glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
     const angle = Math.random() * Math.PI * 2;
-    const speed = 1 + Math.random() * 2.5;
+    const speed = 1 + Math.random() * 3.0; // Un poco más rápido para que se expanda bien
     return {
       x, y, glyph,
       size: 10 + Math.random() * 8,
@@ -314,8 +300,9 @@
     };
   }
 
-  function emitWaves(relX, relY) {
-    for (let i = 0; i < 8; i++) waveParticles.push(createWaveParticle(relX, relY));
+  // Ahora recibe coordenadas de pantalla (clientX, clientY)
+  function emitWaves(x, y) {
+    for (let i = 0; i < 8; i++) waveParticles.push(createWaveParticle(x, y));
   }
 
   function animateWaves() {
@@ -336,30 +323,26 @@
   function updateLens(clientX, clientY) {
     const rect = logo.getBoundingClientRect();
     
-    // Control visual de la lupa para que solo aparezca al pasar sobre el logo
+    // Mostramos la lupa solo si estamos sobre el logo, pero no encerramos la matemática
     if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
       if(!dragging) lens.style.opacity = '0';
     } else {
       lens.style.opacity = '1';
     }
 
-    let x = clientX - rect.left - 15;
-    let y = clientY - rect.top - 15;
-    x = Math.max(0, Math.min(x, rect.width - 30));
-    y = Math.max(0, Math.min(y, rect.height - 30));
-    lens.style.left = x + 'px';
-    lens.style.top = y + 'px';
+    // La lupa ahora sigue libremente al ratón por toda la pantalla sin Math.min limitándola
+    lens.style.left = (clientX - 15) + 'px';
+    lens.style.top = (clientY - 15) + 'px';
   }
 
-  // Evento global para la lupa
+  // Evento global
   window.addEventListener('mousemove', (e) => {
     updateLens(e.clientX, e.clientY);
     if (isEmitting && waveParticles.length < 150) {
       const rect = logo.getBoundingClientRect();
-      const relX = e.clientX - rect.left;
-      const relY = e.clientY - rect.top;
-      if (relX >= 0 && relX <= rect.width && relY >= 0 && relY <= rect.height) {
-        emitWaves(relX, relY);
+      // Emitir ondas solo si el ratón está cerca del logo durante el drag
+      if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        emitWaves(e.clientX, e.clientY);
       }
     }
   });
@@ -374,10 +357,8 @@
     dragging = true;
     isEmitting = true;
     startX = e.clientX; startY = e.clientY;
-    const rect = logo.getBoundingClientRect();
     
-    // CORRECCIÓN: Convertir explícitamente a píxeles y eliminar transform: translate
-    // para evitar el salto de coordenadas.
+    const rect = logo.getBoundingClientRect();
     startLeft = rect.left; 
     startTop = rect.top;
     
@@ -387,9 +368,7 @@
     logo.style.transform = `rotate(${rotation}deg)`; 
     
     velocityX = 0; velocityY = 0;
-    const relX = e.clientX - rect.left;
-    const relY = e.clientY - rect.top;
-    emitWaves(relX, relY);
+    emitWaves(e.clientX, e.clientY);
   });
 
   window.addEventListener('mousemove', (e) => {
@@ -430,10 +409,7 @@
   });
 
   logo.addEventListener('click', (e) => {
-    const rect = logo.getBoundingClientRect();
-    const relX = e.clientX - rect.left;
-    const relY = e.clientY - rect.top;
-    for (let i = 0; i < 12; i++) waveParticles.push(createWaveParticle(relX, relY));
+    for (let i = 0; i < 12; i++) waveParticles.push(createWaveParticle(e.clientX, e.clientY));
   });
 
   logo.addEventListener('wheel', (e) => {
@@ -453,14 +429,14 @@
     setTimeout(() => overlay.style.display = 'none', 800);
   }
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay || e.target === canvasFondo) hideIntro();
+    if (e.target === overlay || e.target === canvasFondo || e.target === wavesCanvas) hideIntro();
   });
   logo.addEventListener('dblclick', (e) => {
     e.stopPropagation();
     hideIntro();
   });
 
-  // Navegación
+  // ===== INTERFAZ RESTANTE =====
   function mostrarSeccion(id) {
     document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
     document.getElementById(id).classList.add('activa');
@@ -472,7 +448,6 @@
     });
   });
 
-  // Modo dual
   const btnModo = document.getElementById('btn-modo');
   btnModo.addEventListener('click', () => {
     document.body.classList.toggle('modo-cientifico');
@@ -480,7 +455,6 @@
     btnModo.textContent = document.body.classList.contains('modo-cientifico') ? 'Modo ciudadano' : 'Modo científico';
   });
 
-  // Leer más
   document.getElementById('btn-historia-mas').addEventListener('click', function() {
     const c = document.getElementById('historia-completa');
     if (c.style.display === 'none' || !c.style.display) {
