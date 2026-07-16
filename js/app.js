@@ -95,7 +95,6 @@ const App = {
     });
   },
 
-  // Rellena automaticamente porcentajes iguales entre los materiales marcados
   autorrellenar() {
     const marcados = Object.keys(this.mixManual);
     if (marcados.length === 0) {
@@ -208,7 +207,8 @@ const App = {
 
     this.dibujarBarrasCuanticas(r.quantum.counts, r.quantum.totalShots);
 
-    this._chatAppend('manolito', ManolitoChat.RESPUESTAS.k_final(r));
+    // CORRECCIÓN: Llamada a la estructura de idioma actualizada
+    this._chatAppend('manolito', ManolitoChat.RESPUESTAS.k_final.es(r));
   },
 
   dibujarBarrasCuanticas(counts, total) {
@@ -226,14 +226,27 @@ const App = {
     }
   },
 
-  enviarChat() {
+  // CORRECCIÓN: Función asíncrona para soportar consultas a APIs externas
+  async enviarChat() {
     const input = document.getElementById('chat-input');
     const msg = input.value.trim();
     if (!msg) return;
     input.value = '';
     this._chatAppend('user', msg);
-    const resp = ManolitoChat.responder(msg);
-    this._chatAppend('manolito', resp);
+    
+    // Añadimos un pequeño indicador de carga para que no parezca que está bloqueado
+    const loadingId = 'loading-' + Date.now();
+    this._chatAppend('manolito', '<span id="'+loadingId+'">Pensando...</span>');
+    
+    const resp = await ManolitoChat.responder(msg);
+    
+    // Reemplazamos el indicador de carga con la respuesta real
+    const loadingEl = document.getElementById(loadingId);
+    if (loadingEl) {
+      loadingEl.parentNode.innerHTML = resp;
+    } else {
+      this._chatAppend('manolito', resp);
+    }
   },
 
   _chatAppend(quien, texto) {
