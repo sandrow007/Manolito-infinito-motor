@@ -1,262 +1,195 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manolito Infinito — Motor Industrial Térmico-Cuántico</title>
-<link rel="stylesheet" href="styles.css">
-<style>
-  /* ===== Logo integrado (mismo estilo serio) ===== */
-  #logo-container {
-    display: inline-block;
-    vertical-align: middle;
-    width: 40px;
-    height: auto;
-    filter: grayscale(1) brightness(0.2);
-    transition: filter 0.8s ease, transform 0.2s ease;
-    margin-right: 16px;
-  }
-  #logo-container:hover {
-    filter: grayscale(0) brightness(1);
-  }
-  #logo-container svg {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manolito Infinito — Motor Industrial Térmico-Cuántico</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --paleta-dorado: #C5A059;
+      --paleta-teal: #007A87;
+      --paleta-granate: #7A0016;
+      --paleta-fondo: #030303;
+    }
 
-  /* ===== Estructura en dos fases ===== */
-  #fase-intro { }
-  #fase-calculadora {
-    display: none; /* oculta hasta que el usuario pulse el botón */
-    margin-top: 40px;
-  }
+    #intro-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: var(--paleta-fondo);
+      transition: opacity 0.8s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #intro-overlay.oculto { opacity: 0; pointer-events: none; }
+    #aether-field { position: absolute; inset: 0; z-index: 1; }
 
-  /* Botón para saltar a la herramienta */
-  .btn-acceder {
-    display: inline-block;
-    background: var(--accent, #C5A059);
-    color: #fff;
-    padding: 12px 30px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-family: var(--font-mono), monospace;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: background 0.2s;
-    cursor: pointer;
-    border: none;
-    margin-top: 20px;
-  }
-  .btn-acceder:hover {
-    background: var(--accent-dark, #a68842);
-  }
+    #intro-logo {
+      position: absolute;
+      width: 120px; height: 180px;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) rotate(0deg);
+      z-index: 20;
+      cursor: grab; user-select: none;
+      filter: grayscale(1) brightness(0.25);
+      transition: filter 0.8s ease;
+    }
+    #intro-logo:active { cursor: grabbing; }
+    #intro-logo:hover { filter: grayscale(0) brightness(1.2); }
+    #intro-logo svg {
+      width: 100%; height: 100%; display: block;
+    }
 
-  /* Enlace para desplegar la info del proyecto */
-  .info-toggle {
-    color: var(--accent, #C5A059);
-    text-decoration: underline;
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-size: 0.95rem;
-    margin-top: 15px;
-    display: inline-block;
-  }
+    #waves-canvas {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 25; pointer-events: none;
+    }
 
-  /* Contenedor de la información extensa (oculto por defecto) */
-  #info-detallada {
-    display: none;
-    margin-top: 25px;
-    padding: 20px;
-    border: 1px dashed var(--text-mid);
-    background: rgba(255,255,255,0.02);
-    border-radius: 4px;
-  }
-</style>
+    #lens {
+      position: absolute; pointer-events: none;
+      width: 30px; height: 30px;
+      border: 1px solid var(--paleta-dorado);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(197,160,89,0.4) 0%, transparent 80%);
+      box-shadow: 0 0 10px var(--paleta-dorado);
+      z-index: 30; mix-blend-mode: screen; overflow: hidden;
+      left: 0; top: 0;
+      opacity: 0; /* Oculto inicialmente para no quedar flotando fuera del logo */
+      transition: opacity 0.2s ease;
+    }
+    #lens::before {
+      content: ''; position: absolute; inset: -50%; width: 200%; height: 200%;
+      background-image:
+        radial-gradient(rgba(255,255,255,0.6) 1px, transparent 0),
+        radial-gradient(var(--paleta-dorado) 1px, transparent 0);
+      background-size: 3px 3px, 6px 6px;
+      animation: quantum-flicker 0.07s infinite steps(2);
+      opacity: 0.9;
+    }
+    @keyframes quantum-flicker {
+      0% { transform: translate(0,0); } 50% { transform: translate(-1px, 1px); } 100% { transform: translate(1px, -1px); }
+    }
+
+    .site-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; padding: 15px 20px;
+      border-bottom: 1px solid var(--paleta-dorado);
+      margin-bottom: 20px; background: rgba(3,3,3,0.8);
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    #logo-header { width: 36px; height: auto; filter: grayscale(1) brightness(0.2); transition: filter 0.8s; }
+    #logo-header:hover { filter: grayscale(0) brightness(1); }
+    .site-title { font-family: var(--font-mono); font-size: 1.3rem; color: var(--paleta-dorado); letter-spacing: 0.5px; }
+    .site-nav a { color: var(--paleta-dorado); text-decoration: none; margin-left: 20px; font-family: var(--font-mono); font-size: 0.85rem; }
+    .site-nav a:hover { opacity: 0.7; }
+    .modo-toggle {
+      background: none; border: 1px solid var(--paleta-dorado); color: var(--paleta-dorado);
+      padding: 5px 12px; font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; border-radius: 3px;
+    }
+    .modo-toggle:hover { background: var(--paleta-dorado); color: #000; }
+    .seccion { display: none; }
+    .seccion.activa { display: block; }
+    .modo-ciudadano .texto-cientifico { display: none; }
+    .modo-cientifico .texto-ciudadano { display: none; }
+    .info-toggle {
+      color: var(--paleta-dorado); text-decoration: underline; cursor: pointer;
+      background: none; border: none; font-size: 0.95rem; margin-top: 15px; display: inline-block;
+    }
+  </style>
 </head>
-<body>
+<body class="modo-ciudadano">
 
-<div class="blueprint-frame">
+<!-- INTRO -->
+<div id="intro-overlay">
+  <canvas id="aether-field"></canvas>
+  <div id="intro-logo" title="Arrastra, gira con la rueda, doble clic para entrar">
+    <svg viewBox="0 0 200 300">
+      <circle cx="100" cy="150" r="45" stroke="var(--paleta-dorado)" stroke-width="2" fill="none" />
+      <path d="M 60,165 Q 80,155 100,165 T 140,165 M 65,175 Q 82.5,167 100,175 T 135,175" fill="none" stroke="var(--paleta-teal)" stroke-width="2"/>
+      <path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
+      <path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
+    </svg>
+    <canvas id="waves-canvas"></canvas>
+    <div id="lens"></div>
+  </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="blueprint-frame" style="padding-bottom: 40px;">
   <span class="corner-mark tl"></span>
   <span class="corner-mark tr"></span>
   <span class="corner-mark bl"></span>
   <span class="corner-mark br"></span>
 
-  <!-- ===================== FASE 1: INTRO ===================== -->
-  <div id="fase-intro">
-    <header class="hero" style="text-align:center; padding-top:60px;">
-      <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap;">
-        <div id="logo-container">
-          <svg viewBox="0 0 200 300">
-            <circle cx="100" cy="150" r="45" stroke="#C5A059" stroke-width="2" fill="none" />
-            <path d="M 60,165 Q 80,155 100,165 T 140,165 M 65,175 Q 82.5,167 100,175 T 135,175" fill="none" stroke="#007A87" stroke-width="2"/>
-            <path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="#7A0016" stroke-width="2"/>
-            <path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="#7A0016" stroke-width="2"/>
-          </svg>
-        </div>
-        <div style="text-align:left;">
-          <div class="hero-eyebrow">Motor industrial térmico-cuántico &nbsp;·&nbsp; v1.0 web</div>
-          <h1 class="hero-title">Manolito Infinito</h1>
-          <p class="hero-sub" style="max-width:650px;">
-            Herramienta de análisis térmico de materiales, detección visual y traducción a circuito cuántico. Todo en el navegador, sin instalación.
-          </p>
+  <header class="site-header">
+    <div class="header-left">
+      <div id="logo-header"><svg viewBox="0 0 200 300"><circle cx="100" cy="150" r="45" stroke="var(--paleta-dorado)" stroke-width="2" fill="none"/><path d="M 60,165 Q 80,155 100,165 T 140,165 M 65,175 Q 82.5,167 100,175 T 135,175" fill="none" stroke="var(--paleta-teal)" stroke-width="2"/><path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/><path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/></svg></div>
+      <span class="site-title">Manolito Infinito</span>
+    </div>
+    <nav class="site-nav">
+      <a href="#historia">Historia</a>
+      <a href="#motor">Motor</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="modo-toggle" id="btn-modo">Modo científico</button>
+  </header>
+
+  <!-- SECCIÓN HISTORIA -->
+  <section id="seccion-historia" class="seccion activa">
+    <div class="panel about-panel">
+      <div class="panel-label">Historia del proyecto</div>
+      <div class="modo-texto texto-ciudadano">
+        <p>Manolito Infinito nació de una observación simple: el asfalto sigue caliente después del atardecer. Nos preguntamos si, conociendo los materiales, podríamos predecir cuánto calor acumulan y cómo enfriar las ciudades.</p>
+        <p>Une física térmica y computación cuántica para visualizar la estabilidad de una mezcla. Todo funciona en el navegador, sin instalar nada.</p>
+        <button class="info-toggle" id="btn-historia-mas">Leer la historia completa</button>
+        <div id="historia-completa" style="display:none; margin-top:15px;">
+          <p>La idea nació una noche caminando sobre asfalto caliente. El color oscuro absorbe radiación y la libera lentamente, creando islas de calor. Con esta herramienta calculamos la conductividad ponderada, el presupuesto y lo traducimos a un circuito cuántico de 2 qubits.</p>
+          <p>La versión web simula el circuito; la profesional (Python) se conecta a hardware real de IBM Quantum.</p>
         </div>
       </div>
-      <button class="btn-acceder" id="btn-mostrar-calculadora">Acceder al módulo de cálculo</button>
-      <br>
-      <button class="info-toggle" id="btn-info-toggle">¿Qué es Manolito Infinito? (leer más)</button>
-    </header>
-
-    <!-- Información detallada (oculta por defecto) -->
-    <div id="info-detallada">
-      <div class="panel about-panel">
-        <div class="panel-label">Sobre el proyecto</div>
-        <h2 class="about-title">¿Qué es Manolito Infinito?</h2>
-        <p class="about-text">
-          Manolito Infinito es una herramienta que calcula cómo se comporta
-          térmicamente cualquier superficie —una fachada, un tejado, una calle,
-          una pieza industrial— según de qué materiales está hecha. Te dice
-          cuánto calor pasa a través de ella, cuánto costaría construirla con esos
-          materiales, y además traduce ese resultado a un pequeño circuito
-          cuántico simulado, como una segunda forma —más visual y experimental—
-          de leer la estabilidad térmica del conjunto.
-        </p>
-        <h3 class="about-sub">¿Por qué nace este proyecto?</h3>
-        <p class="about-text">
-          La idea nació de una observación muy simple, casi nocturna: caminando de
-          noche por el asfalto todavía caliente horas después de que se fuera el
-          sol, se hace evidente que ese negro no es un detalle estético — es una
-          trampa térmica. El asfalto absorbe una barbaridad de radiación solar
-          durante el día y la libera muy lentamente durante la noche, y esa simple
-          idea —qué material elijamos cambia cuánto calor acumula y libera una
-          ciudad entera— es la semilla de todo este motor. De ahí surgió la
-          pregunta de fondo: si pudiéramos calcular y comparar materiales de forma
-          rápida y visual, ¿podríamos tomar mejores decisiones antes de construir?
-        </p>
-        <h3 class="about-sub" id="impacto-radiacion">Impacto de la radiación y el calor en los materiales</h3>
-        <p class="about-text">
-          Cada material absorbe, refleja y libera la energía del sol de forma muy
-          distinta. Dos factores lo explican:
-        </p>
-        <ul class="about-list">
-          <li><strong>Albedo (reflectividad):</strong> las superficies claras
-            (hormigón claro, piedra caliza) reflejan buena parte de la radiación
-            solar; las oscuras (asfalto, tejados negros) la absorben casi toda.</li>
-          <li><strong>Conductividad térmica (k):</strong> una vez absorbido el
-            calor, unos materiales lo transmiten y liberan rápido (metales) y
-            otros lo retienen durante horas (asfalto, hormigón masivo), lo que
-            alarga la noche calurosa mucho después de ponerse el sol.</li>
-        </ul>
-        <p class="about-text">
-          Esta combinación es una de las causas principales del llamado
-          <em>efecto isla de calor urbano</em>: ciudades enteras con demasiado
-          asfalto y hormigón oscuro que de noche literalmente no bajan de
-          temperatura al ritmo que debieran. Elegir mejor los materiales —o al
-          menos entender su comportamiento antes de decidir— tiene un impacto real
-          en el confort, el gasto energético y la salud de quien vive ahí. Ese es
-          el problema serio detrás de un motor que, a simple vista, solo hace
-          cuentas de conductividad.
-        </p>
-        <h3 class="about-sub" id="honestidad">Honestidad sobre la precisión de los análisis</h3>
-        <p class="about-text">
-          El detector automático de materiales por imagen/vídeo no es infalible,
-          y no pretendemos que lo parezca. En las primeras versiones, el brillo
-          del sol en una foto se confundía con aluminio (ambos son zonas muy
-          brillantes y poco saturadas de color) — un fallo real que detectamos y
-          corregimos con un filtro específico de sobreexposición. Desde entonces
-          las detecciones son notablemente más precisas, aunque siguen siendo una
-          <strong>estimación por color</strong>, no un análisis de laboratorio: no
-          son correctas al 100% y no deben usarse como sustituto de un ensayo de
-          materiales certificado. Los cálculos térmicos y de presupuesto, en
-          cambio, son matemática determinista (las mismas fórmulas de ingeniería
-          del motor original) y no dependen de ninguna estimación visual —esos
-          números son tan fiables como los datos de conductividad y coste que
-          alimentan el sistema.
-        </p>
-        <h3 class="about-sub" id="version-profesional">Versión profesional con conexión real a IBM Quantum</h3>
-        <p class="about-text">
-          Esta versión web reproduce matemáticamente el mismo circuito cuántico
-          (puerta RY + CNOT sobre 2 qubits) que el motor original en Python, pero
-          lo simula localmente en tu navegador, sin conexión a ningún servicio
-          externo. El motor original de escritorio, en cambio, sí puede
-          ejecutarse contra <strong>hardware cuántico real de IBM Quantum</strong>
-          a través de Qiskit, para quien quiera ir un paso más allá de la
-          simulación. Si te interesa esa versión profesional —con ejecución en
-          qubits reales, no solo simulados— escríbeme a
-          <a href="mailto:sandro.a007@gmail.com">sandro.a007@gmail.com</a> y lo
-          hablamos.
-        </p>
+      <div class="modo-texto texto-cientifico" style="display:none;">
+        <p>Motor de cálculo termofísico con traducción a circuito cuántico. Aplica ley de Fourier, ponderación de conductividades y mapeo a puerta RY con entrelazamiento CNOT sobre 2 qubits.</p>
+        <p>El detector de materiales usa espacio HSV con filtro de sobreexposición. Resultados deterministas; la detección visual es una estimación no certificada.</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ===================== FASE 2: CALCULADORA ===================== -->
-  <div id="fase-calculadora">
+  <!-- SECCIÓN MOTOR -->
+  <section id="seccion-motor" class="seccion">
     <div class="panel" style="margin-bottom:20px;">
       <div class="panel-label">Módulo de cálculo termofísico + circuito cuántico</div>
-      <p style="margin:0; font-size:0.95rem; color:var(--text-mid);">
-        Configure el área, los materiales y las condiciones. El sistema calculará la conductividad ponderada, el presupuesto, el flujo térmico y el correspondiente estado cuántico de 2 qubits. Los resultados se mostrarán al pulsar “Calcular”.
-      </p>
+      <div class="modo-texto texto-ciudadano"><p>Elige materiales, ajusta porcentajes o sube una foto. Obtendrás calor transmitido, presupuesto y estabilidad cuántica.</p></div>
+      <div class="modo-texto texto-cientifico" style="display:none;"><p>Configure área, materiales y condiciones. Se calculará conductividad ponderada, flujo térmico, presupuesto y estado cuántico de 2 qubits.</p></div>
     </div>
-
-    <div class="grid-main">
-      <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
+    <div class="grid-main" id="calculadora">
       <div>
         <div class="panel">
           <div class="panel-label">01 · Área y condiciones</div>
-          <label class="field-label">Área (m²)</label>
-          <input type="number" id="input-area" value="100" min="1" step="1">
+          <label class="field-label">Área (m²)</label><input type="number" id="input-area" value="100" min="1" step="1">
           <div style="height:10px"></div>
-          <label class="field-label">Diferencia de temperatura ΔT (°C)</label>
-          <input type="number" id="input-tempdiff" value="20" min="0" step="1">
+          <label class="field-label">Diferencia de temperatura ΔT (°C)</label><input type="number" id="input-tempdiff" value="20" min="0" step="1">
         </div>
-
         <div class="panel">
           <div class="panel-label">02 · Mezcla de materiales (manual)</div>
           <div id="material-selector"></div>
           <div class="mix-total" id="mix-total">Suma actual: 0% (debe ser 100%)</div>
-          <div class="btn-row">
-            <button class="btn" id="btn-autorrellenar">Repartir % iguales</button>
-          </div>
+          <div class="btn-row"><button class="btn" id="btn-autorrellenar">Repartir % iguales</button></div>
         </div>
-
         <div class="panel">
           <div class="panel-label">03 · Detección automática (imagen / vídeo)</div>
-          <div class="dropzone" id="dropzone">
-            Arrastra una foto o vídeo aquí, o haz clic para elegir archivo
-            <input type="file" id="file-input" accept="image/*,video/*">
-          </div>
+          <div class="dropzone" id="dropzone">Arrastra una foto o vídeo aquí, o haz clic para elegir archivo<input type="file" id="file-input" accept="image/*,video/*"></div>
           <div id="preview-container" style="margin-top:12px"></div>
           <div class="detected-tags" id="detected-tags"></div>
-          <div class="btn-row">
-            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);font-family:var(--font-mono)">
-              <input type="checkbox" id="usar-deteccion" disabled>
-              Usar materiales detectados en el cálculo
-            </label>
-          </div>
+          <div class="btn-row"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);font-family:var(--font-mono)"><input type="checkbox" id="usar-deteccion" disabled>Usar materiales detectados en el cálculo</label></div>
         </div>
-
-        <div class="btn-row">
-          <button class="btn primary" id="btn-calcular">Calcular k_final · Budget · Quantum</button>
-        </div>
-
-        <div class="panel" style="margin-top:20px">
-          <div class="panel-label">Registro</div>
-          <div class="status-log" id="status-log"></div>
-        </div>
+        <div class="btn-row"><button class="btn primary" id="btn-calcular">Calcular k_final · Budget · Quantum</button></div>
+        <div class="panel" style="margin-top:20px"><div class="panel-label">Registro</div><div class="status-log" id="status-log"></div></div>
       </div>
-
-      <!-- COLUMNA DERECHA: RESULTADOS + CHAT -->
       <div>
         <div class="panel" id="resultados-panel" style="display:none">
           <div class="panel-label">Resultado térmico</div>
           <div class="k-readout" id="k-readout">— <span class="unit">W/(m·K)</span></div>
-          <div class="thermo-gauge">
-            <div class="thermo-needle" id="thermo-needle" style="left:0%"></div>
-          </div>
+          <div class="thermo-gauge"><div class="thermo-needle" id="thermo-needle" style="left:0%"></div></div>
           <div class="thermo-labels"><span>Frío / aislante</span><span>Alta conductividad</span></div>
-
           <div class="result-grid">
             <div class="result-card"><div class="rc-label">Budget total</div><div class="rc-value" id="result-budget">—</div></div>
             <div class="result-card"><div class="rc-label">Flujo térmico</div><div class="rc-value" id="result-flux">—</div></div>
@@ -265,66 +198,301 @@
             <div class="result-card"><div class="rc-label">Estabilidad |00&gt;</div><div class="rc-value" id="result-estabilidad">—</div></div>
           </div>
           <div id="result-nivel" style="margin-top:10px;font-family:var(--font-mono);font-size:13px"></div>
-
-          <div class="qcircuit">
-            <div class="panel-label" style="margin-bottom:8px">Circuito: RY(θ) → CNOT → Medición</div>
-            <div class="qbars" id="qbars"></div>
-          </div>
-
+          <div class="qcircuit"><div class="panel-label" style="margin-bottom:8px">Circuito: RY(θ) → CNOT → Medición</div><div class="qbars" id="qbars"></div></div>
           <div class="btn-row">
             <button class="btn" id="btn-export-json">Exportar JSON</button>
             <button class="btn" id="btn-export-csv">Exportar CSV</button>
             <button class="btn" id="btn-export-pdf">Exportar PDF</button>
           </div>
         </div>
-
         <div class="panel">
           <div class="panel-label">Manolito Infinito — consulta</div>
-          <div class="chat-window" id="chat-window">
-            <div class="chat-msg">
-              <div class="who">Manolito</div>
-              <div>Buenas, compadre! Pregúntame por k_final, budget, lo cuántico, la estabilidad o el filtro anti-sol — puedes escribirme en español, inglés, francés, italiano, portugués o alemán, que te entiendo igual.</div>
-            </div>
-          </div>
-          <div class="chat-input-row">
-            <input type="text" id="chat-input" placeholder="Escribe tu pregunta...">
-            <button class="btn" id="chat-send">Enviar</button>
-          </div>
+          <div class="chat-window" id="chat-window"><div class="chat-msg"><div class="who">Manolito</div><div>Pregúntame sobre conductividad, presupuesto o la parte cuántica. Entiendo español, inglés, francés, italiano, portugués y alemán.</div></div></div>
+          <div class="chat-input-row"><input type="text" id="chat-input" placeholder="Escribe tu pregunta..."><button class="btn" id="chat-send">Enviar</button></div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- SECCIÓN CONTACTO -->
+  <section id="seccion-contacto" class="seccion">
+    <div class="panel" style="text-align:center;">
+      <div class="panel-label">Versión profesional y contacto</div>
+      <p>Este proyecto también existe como motor Python con conexión a hardware cuántico real de IBM Quantum.</p>
+      <p>Para colaborar o solicitar la versión de escritorio:</p>
+      <p style="font-family:var(--font-mono); font-size:1.1rem;"><a href="mailto:sandro.a007@gmail.com">sandro.a007@gmail.com</a></p>
+    </div>
+  </section>
 
   <footer>
-    Manolito Infinito · Motor Industrial Térmico-Cuántico · 100% cliente, sin backend
+    <span style="opacity:0.6;">Manolito Infinito · Motor Industrial Térmico-Cuántico · 100% cliente, sin backend</span>
     &nbsp;·&nbsp; <a href="#" id="footer-privacidad">Privacidad y cookies</a>
     &nbsp;·&nbsp; <a href="mailto:sandro.a007@gmail.com">Contacto</a>
   </footer>
 </div>
 
-<!-- ===== SCRIPTS PROPIOS (sin tocar los tuyos) ===== -->
 <script>
-  // Mostrar / ocultar la calculadora
-  document.getElementById('btn-mostrar-calculadora').addEventListener('click', function() {
-    document.getElementById('fase-calculadora').style.display = 'block';
-    // Scroll suave hacia la calculadora
-    document.getElementById('fase-calculadora').scrollIntoView({ behavior: 'smooth' });
+  // ===== PALETA ALEATORIA =====
+  const paletas = [
+    { dorado: '#C5A059', teal: '#007A87', granate: '#7A0016' },
+    { dorado: '#B8860B', teal: '#2E8B57', granate: '#8B0000' },
+    { dorado: '#DAA520', teal: '#008080', granate: '#800020' },
+    { dorado: '#CFB53B', teal: '#317873', granate: '#722F37' },
+    { dorado: '#E6C200', teal: '#0F4C5C', granate: '#660000' },
+    { dorado: '#AA7A39', teal: '#006D6F', granate: '#5E1914' },
+    { dorado: '#D4AF37', teal: '#1A7A7A', granate: '#4A0E0E' },
+    { dorado: '#C9A84C', teal: '#1F6A6A', granate: '#6E1A1A' },
+    { dorado: '#B7994A', teal: '#0E5E5E', granate: '#571515' },
+    { dorado: '#CBA135', teal: '#1E5F5F', granate: '#4B1010' },
+    { dorado: '#BC9A3C', teal: '#1F5C5C', granate: '#5A1212' },
+    { dorado: '#A68A3C', teal: '#1B5B5B', granate: '#511111' },
+    { dorado: '#C4A44A', teal: '#1E5B5B', granate: '#4D0F0F' },
+    { dorado: '#B8953A', teal: '#1F5858', granate: '#501212' },
+    { dorado: '#D1AD4D', teal: '#1D6262', granate: '#4A0E0E' },
+    { dorado: '#C2A256', teal: '#1C5D5D', granate: '#501515' },
+    { dorado: '#BD9B44', teal: '#1D6060', granate: '#4C1111' }
+  ];
+  const p = paletas[Math.floor(Math.random() * paletas.length)];
+  document.documentElement.style.setProperty('--paleta-dorado', p.dorado);
+  document.documentElement.style.setProperty('--paleta-teal', p.teal);
+  document.documentElement.style.setProperty('--paleta-granate', p.granate);
+
+  // ===== PARTÍCULAS DE FONDO =====
+  const canvasFondo = document.getElementById('aether-field');
+  const ctxFondo = canvasFondo.getContext('2d');
+  let particles = [];
+  function resizeFondo() { canvasFondo.width = innerWidth; canvasFondo.height = innerHeight; }
+  resizeFondo(); window.addEventListener('resize', resizeFondo);
+  for (let i = 0; i < 100; i++) particles.push({ x: Math.random()*canvasFondo.width, y: Math.random()*canvasFondo.height, size: Math.random()*1.5, speed: Math.random()*0.5 });
+  function drawParticles() {
+    ctxFondo.fillStyle = '#030303'; ctxFondo.fillRect(0,0,canvasFondo.width, canvasFondo.height);
+    ctxFondo.fillStyle = 'rgba(255,255,255,0.1)';
+    particles.forEach(p => {
+      p.y -= p.speed; if (p.y < 0) p.y = canvasFondo.height;
+      ctxFondo.beginPath(); ctxFondo.arc(p.x, p.y, p.size, 0, Math.PI*2); ctxFondo.fill();
+    });
+    requestAnimationFrame(drawParticles);
+  }
+  drawParticles();
+
+  // ===== LOGO, LUPA Y ONDAS =====
+  const logo = document.getElementById('intro-logo');
+  const lens = document.getElementById('lens');
+  const wavesCanvas = document.getElementById('waves-canvas');
+  const ctxWaves = wavesCanvas.getContext('2d');
+
+  function updateWavesSize() {
+    wavesCanvas.width = logo.offsetWidth;
+    wavesCanvas.height = logo.offsetHeight;
+  }
+  updateWavesSize();
+  window.addEventListener('resize', updateWavesSize);
+
+  const glyphs = [
+    'ა','ბ','გ','დ','ე','ვ','ზ','თ','ი','კ','ლ','მ','ნ','ო','პ','ჟ','რ','ს','ტ','უ','ფ','ქ','ღ','ყ','შ','ჩ','ც','ძ','წ','ჭ','ხ','ჯ','ჰ',
+    'α','β','γ','δ','ε','ζ','η','θ','ι','κ','λ','μ','ν','ξ','ο','π','ρ','σ','τ','υ','φ','χ','ψ','ω',
+    'A','B','C','D','E','F','G','H','I','L','M','N','O','P','Q','R','S','T','V','X','Y','Z',
+    'ܐ','ܒ','ܓ','ܕ','ܗ','ܘ','ܙ','ܚ','ܛ','ܝ','ܟ','ܠ','ܡ','ܢ','ܣ','ܥ','ܦ','ܨ','ܩ','ܪ','ܫ','ܬ',
+    '{','}','[',']','(',')','<','>','/','\\','|','&','!','?','#','@','*','+','-','=', '%', ';', ':', '"', "'"
+  ];
+  let waveParticles = [];
+  let isEmitting = false;
+
+  function createWaveParticle(x, y) {
+    const glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 2.5;
+    return {
+      x, y, glyph,
+      size: 10 + Math.random() * 8,
+      opacity: 0.9,
+      life: 0.6 + Math.random() * 0.5,
+      maxLife: 0.6 + Math.random() * 0.5,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      color: `hsl(${Math.random() * 40 + 30}, 70%, 70%)`
+    };
+  }
+
+  function emitWaves(relX, relY) {
+    for (let i = 0; i < 8; i++) waveParticles.push(createWaveParticle(relX, relY));
+  }
+
+  function animateWaves() {
+    ctxWaves.clearRect(0, 0, wavesCanvas.width, wavesCanvas.height);
+    waveParticles = waveParticles.filter(p => p.life > 0);
+    for (let p of waveParticles) {
+      p.x += p.vx; p.y += p.vy;
+      p.life -= 0.016;
+      const alpha = p.opacity * (p.life / p.maxLife);
+      ctxWaves.font = `${p.size}px serif`;
+      ctxWaves.fillStyle = p.color.replace(')', `, ${alpha})`).replace('hsl', 'hsla');
+      ctxWaves.fillText(p.glyph, p.x, p.y);
+    }
+    requestAnimationFrame(animateWaves);
+  }
+  animateWaves();
+
+  function updateLens(clientX, clientY) {
+    const rect = logo.getBoundingClientRect();
+    
+    // Control visual de la lupa para que solo aparezca al pasar sobre el logo
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
+      if(!dragging) lens.style.opacity = '0';
+    } else {
+      lens.style.opacity = '1';
+    }
+
+    let x = clientX - rect.left - 15;
+    let y = clientY - rect.top - 15;
+    x = Math.max(0, Math.min(x, rect.width - 30));
+    y = Math.max(0, Math.min(y, rect.height - 30));
+    lens.style.left = x + 'px';
+    lens.style.top = y + 'px';
+  }
+
+  // Evento global para la lupa
+  window.addEventListener('mousemove', (e) => {
+    updateLens(e.clientX, e.clientY);
+    if (isEmitting && waveParticles.length < 150) {
+      const rect = logo.getBoundingClientRect();
+      const relX = e.clientX - rect.left;
+      const relY = e.clientY - rect.top;
+      if (relX >= 0 && relX <= rect.width && relY >= 0 && relY <= rect.height) {
+        emitWaves(relX, relY);
+      }
+    }
   });
 
-  // Mostrar / ocultar la información detallada
-  document.getElementById('btn-info-toggle').addEventListener('click', function() {
-    var info = document.getElementById('info-detallada');
-    if (info.style.display === 'none' || info.style.display === '') {
-      info.style.display = 'block';
-      this.textContent = 'Ocultar información';
+  // ===== ARRASTRE DEL LOGO =====
+  let dragging = false, startX, startY, startLeft, startTop, rotation = 0;
+  let velocityX = 0, velocityY = 0;
+  const overlay = document.getElementById('intro-overlay');
+
+  logo.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    dragging = true;
+    isEmitting = true;
+    startX = e.clientX; startY = e.clientY;
+    const rect = logo.getBoundingClientRect();
+    
+    // CORRECCIÓN: Convertir explícitamente a píxeles y eliminar transform: translate
+    // para evitar el salto de coordenadas.
+    startLeft = rect.left; 
+    startTop = rect.top;
+    
+    logo.style.transition = 'none';
+    logo.style.left = startLeft + 'px';
+    logo.style.top = startTop + 'px';
+    logo.style.transform = `rotate(${rotation}deg)`; 
+    
+    velocityX = 0; velocityY = 0;
+    const relX = e.clientX - rect.left;
+    const relY = e.clientY - rect.top;
+    emitWaves(relX, relY);
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    logo.style.left = (startLeft + dx) + 'px';
+    logo.style.top = (startTop + dy) + 'px';
+    logo.style.transform = `rotate(${rotation}deg)`;
+    velocityX = dx * 0.15;
+    velocityY = dy * 0.15;
+    startX = e.clientX; startY = e.clientY;
+    startLeft = parseFloat(logo.style.left);
+    startTop = parseFloat(logo.style.top);
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!dragging) return;
+    dragging = false;
+    isEmitting = false;
+    function applyInertia() {
+      if (Math.abs(velocityX) < 0.01 && Math.abs(velocityY) < 0.01) {
+        logo.style.transition = 'left 0.6s cubic-bezier(0.25,0.8,0.25,1.2), top 0.6s cubic-bezier(0.25,0.8,0.25,1.2), transform 0.6s ease';
+        logo.style.left = '50%';
+        logo.style.top = '50%';
+        logo.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+        setTimeout(() => logo.style.transition = 'filter 0.8s ease', 600);
+        return;
+      }
+      logo.style.left = (parseFloat(logo.style.left) + velocityX) + 'px';
+      logo.style.top = (parseFloat(logo.style.top) + velocityY) + 'px';
+      logo.style.transform = `rotate(${rotation}deg)`;
+      velocityX *= 0.92;
+      velocityY *= 0.92;
+      requestAnimationFrame(applyInertia);
+    }
+    applyInertia();
+  });
+
+  logo.addEventListener('click', (e) => {
+    const rect = logo.getBoundingClientRect();
+    const relX = e.clientX - rect.left;
+    const relY = e.clientY - rect.top;
+    for (let i = 0; i < 12; i++) waveParticles.push(createWaveParticle(relX, relY));
+  });
+
+  logo.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    rotation += e.deltaY > 0 ? 15 : -15;
+    if (!dragging) {
+      logo.style.transition = 'transform 0.2s ease';
+      logo.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+      setTimeout(() => logo.style.transition = 'filter 0.8s ease', 200);
     } else {
-      info.style.display = 'none';
-      this.textContent = '¿Qué es Manolito Infinito? (leer más)';
+      logo.style.transform = `rotate(${rotation}deg)`;
+    }
+  });
+
+  function hideIntro() {
+    overlay.classList.add('oculto');
+    setTimeout(() => overlay.style.display = 'none', 800);
+  }
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay || e.target === canvasFondo) hideIntro();
+  });
+  logo.addEventListener('dblclick', (e) => {
+    e.stopPropagation();
+    hideIntro();
+  });
+
+  // Navegación
+  function mostrarSeccion(id) {
+    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+    document.getElementById(id).classList.add('activa');
+  }
+  document.querySelectorAll('.site-nav a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      mostrarSeccion('seccion-' + a.getAttribute('href').substring(1));
+    });
+  });
+
+  // Modo dual
+  const btnModo = document.getElementById('btn-modo');
+  btnModo.addEventListener('click', () => {
+    document.body.classList.toggle('modo-cientifico');
+    document.body.classList.toggle('modo-ciudadano');
+    btnModo.textContent = document.body.classList.contains('modo-cientifico') ? 'Modo ciudadano' : 'Modo científico';
+  });
+
+  // Leer más
+  document.getElementById('btn-historia-mas').addEventListener('click', function() {
+    const c = document.getElementById('historia-completa');
+    if (c.style.display === 'none' || !c.style.display) {
+      c.style.display = 'block';
+      this.textContent = 'Ocultar historia completa';
+    } else {
+      c.style.display = 'none';
+      this.textContent = 'Leer la historia completa';
     }
   });
 </script>
 
-<!-- Tus archivos JS originales (se cargan igual) -->
 <script src="js/constants.js"></script>
 <script src="js/thermal.js"></script>
 <script src="js/detector.js"></script>
@@ -333,6 +501,5 @@
 <script src="js/export.js"></script>
 <script src="js/privacy.js"></script>
 <script src="js/app.js"></script>
-
 </body>
 </html>
