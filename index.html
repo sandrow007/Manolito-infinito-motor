@@ -5,6 +5,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manolito Infinito — Motor Industrial Térmico-Cuántico</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+  /* ===== Logo integrado (mismo estilo serio) ===== */
+  #logo-container {
+    display: inline-block;
+    vertical-align: middle;
+    width: 40px;
+    height: auto;
+    filter: grayscale(1) brightness(0.2);
+    transition: filter 0.8s ease, transform 0.2s ease;
+    margin-right: 16px;
+  }
+  #logo-container:hover {
+    filter: grayscale(0) brightness(1);
+  }
+  #logo-container svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ===== Estructura en dos fases ===== */
+  #fase-intro { }
+  #fase-calculadora {
+    display: none; /* oculta hasta que el usuario pulse el botón */
+    margin-top: 40px;
+  }
+
+  /* Botón para saltar a la herramienta */
+  .btn-acceder {
+    display: inline-block;
+    background: var(--accent, #C5A059);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--font-mono), monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+    cursor: pointer;
+    border: none;
+    margin-top: 20px;
+  }
+  .btn-acceder:hover {
+    background: var(--accent-dark, #a68842);
+  }
+
+  /* Enlace para desplegar la info del proyecto */
+  .info-toggle {
+    color: var(--accent, #C5A059);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    margin-top: 15px;
+    display: inline-block;
+  }
+
+  /* Contenedor de la información extensa (oculto por defecto) */
+  #info-detallada {
+    display: none;
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px dashed var(--text-mid);
+    background: rgba(255,255,255,0.02);
+    border-radius: 4px;
+  }
+</style>
 </head>
 <body>
 
@@ -14,199 +83,213 @@
   <span class="corner-mark bl"></span>
   <span class="corner-mark br"></span>
 
-  <header class="hero">
-    <div class="hero-eyebrow">Motor industrial térmico-cuántico &nbsp;·&nbsp; v1.0 web</div>
-    <h1 class="hero-title">Manolito Infinito</h1>
-    <p class="hero-sub">
-      Calcula la conductividad térmica ponderada y el presupuesto de cualquier
-      mezcla de materiales, detecta materiales automáticamente en fotos o vídeo,
-      y traduce el resultado a un circuito cuántico de 2 qubits. Todo corre en
-      tu navegador — sin servidor, sin instalar nada.
-    </p>
-    <nav class="section-nav">
-      <a href="#sobre-proyecto">Sobre el proyecto</a>
-      <a href="#calculadora">Calculadora</a>
-      <a href="#impacto-radiacion">Impacto de la radiación</a>
-      <a href="#honestidad">Honestidad de los datos</a>
-      <a href="#version-profesional">Versión profesional (IBM Quantum)</a>
-    </nav>
-  </header>
-
-  <!-- ================= SOBRE EL PROYECTO ================= -->
-  <section class="panel about-panel" id="sobre-proyecto">
-    <div class="panel-label">Sobre el proyecto</div>
-    <h2 class="about-title">¿Qué es Manolito Infinito?</h2>
-    <p class="about-text">
-      Manolito Infinito es una herramienta que calcula cómo se comporta
-      térmicamente cualquier superficie —una fachada, un tejado, una calle,
-      una pieza industrial— según de qué materiales está hecha. Te dice
-      cuánto calor pasa a través de ella, cuánto costaría construirla con esos
-      materiales, y además traduce ese resultado a un pequeño circuito
-      cuántico simulado, como una segunda forma —más visual y experimental—
-      de leer la estabilidad térmica del conjunto.
-    </p>
-
-    <h3 class="about-sub">¿Por qué nace este proyecto?</h3>
-    <p class="about-text">
-      La idea nació de una observación muy simple, casi nocturna: caminando de
-      noche por el asfalto todavía caliente horas después de que se fuera el
-      sol, se hace evidente que ese negro no es un detalle estético — es una
-      trampa térmica. El asfalto absorbe una barbaridad de radiación solar
-      durante el día y la libera muy lentamente durante la noche, y esa simple
-      idea —qué material elijamos cambia cuánto calor acumula y libera una
-      ciudad entera— es la semilla de todo este motor. De ahí surgió la
-      pregunta de fondo: si pudiéramos calcular y comparar materiales de forma
-      rápida y visual, ¿podríamos tomar mejores decisiones antes de construir?
-    </p>
-
-    <h3 class="about-sub" id="impacto-radiacion">Impacto de la radiación y el calor en los materiales</h3>
-    <p class="about-text">
-      Cada material absorbe, refleja y libera la energía del sol de forma muy
-      distinta. Dos factores lo explican:
-    </p>
-    <ul class="about-list">
-      <li><strong>Albedo (reflectividad):</strong> las superficies claras
-        (hormigón claro, piedra caliza) reflejan buena parte de la radiación
-        solar; las oscuras (asfalto, tejados negros) la absorben casi toda.</li>
-      <li><strong>Conductividad térmica (k):</strong> una vez absorbido el
-        calor, unos materiales lo transmiten y liberan rápido (metales) y
-        otros lo retienen durante horas (asfalto, hormigón masivo), lo que
-        alarga la noche calurosa mucho después de ponerse el sol.</li>
-    </ul>
-    <p class="about-text">
-      Esta combinación es una de las causas principales del llamado
-      <em>efecto isla de calor urbano</em>: ciudades enteras con demasiado
-      asfalto y hormigón oscuro que de noche literalmente no bajan de
-      temperatura al ritmo que debieran. Elegir mejor los materiales —o al
-      menos entender su comportamiento antes de decidir— tiene un impacto real
-      en el confort, el gasto energético y la salud de quien vive ahí. Ese es
-      el problema serio detrás de un motor que, a simple vista, solo hace
-      cuentas de conductividad.
-    </p>
-
-    <h3 class="about-sub" id="honestidad">Honestidad sobre la precisión de los análisis</h3>
-    <p class="about-text">
-      El detector automático de materiales por imagen/vídeo no es infalible,
-      y no pretendemos que lo parezca. En las primeras versiones, el brillo
-      del sol en una foto se confundía con aluminio (ambos son zonas muy
-      brillantes y poco saturadas de color) — un fallo real que detectamos y
-      corregimos con un filtro específico de sobreexposición. Desde entonces
-      las detecciones son notablemente más precisas, aunque siguen siendo una
-      <strong>estimación por color</strong>, no un análisis de laboratorio: no
-      son correctas al 100% y no deben usarse como sustituto de un ensayo de
-      materiales certificado. Los cálculos térmicos y de presupuesto, en
-      cambio, son matemática determinista (las mismas fórmulas de ingeniería
-      del motor original) y no dependen de ninguna estimación visual —esos
-      números son tan fiables como los datos de conductividad y coste que
-      alimentan el sistema.
-    </p>
-
-    <h3 class="about-sub" id="version-profesional">Versión profesional con conexión real a IBM Quantum</h3>
-    <p class="about-text">
-      Esta versión web reproduce matemáticamente el mismo circuito cuántico
-      (puerta RY + CNOT sobre 2 qubits) que el motor original en Python, pero
-      lo simula localmente en tu navegador, sin conexión a ningún servicio
-      externo. El motor original de escritorio, en cambio, sí puede
-      ejecutarse contra <strong>hardware cuántico real de IBM Quantum</strong>
-      a través de Qiskit, para quien quiera ir un paso más allá de la
-      simulación. Si te interesa esa versión profesional —con ejecución en
-      qubits reales, no solo simulados— escríbeme a
-      <a href="mailto:sandro.a007@gmail.com">sandro.a007@gmail.com</a> y lo
-      hablamos.
-    </p>
-  </section>
-  <!-- ================= FIN SOBRE EL PROYECTO ================= -->
-
-  <div class="grid-main" id="calculadora">
-
-    <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
-    <div>
-      <div class="panel">
-        <div class="panel-label">01 · Área y condiciones</div>
-        <label class="field-label">Área (m²)</label>
-        <input type="number" id="input-area" value="100" min="1" step="1">
-        <div style="height:10px"></div>
-        <label class="field-label">Diferencia de temperatura ΔT (°C)</label>
-        <input type="number" id="input-tempdiff" value="20" min="0" step="1">
-      </div>
-
-      <div class="panel">
-        <div class="panel-label">02 · Mezcla de materiales (manual)</div>
-        <div id="material-selector"></div>
-        <div class="mix-total" id="mix-total">Suma actual: 0% (debe ser 100%)</div>
-        <div class="btn-row">
-          <button class="btn" id="btn-autorrellenar">Repartir % iguales</button>
+  <!-- ===================== FASE 1: INTRO ===================== -->
+  <div id="fase-intro">
+    <header class="hero" style="text-align:center; padding-top:60px;">
+      <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap;">
+        <div id="logo-container">
+          <svg viewBox="0 0 200 300">
+            <circle cx="100" cy="150" r="45" stroke="#C5A059" stroke-width="2" fill="none" />
+            <path d="M 60,165 Q 80,155 100,165 T 140,165 M 65,175 Q 82.5,167 100,175 T 135,175" fill="none" stroke="#007A87" stroke-width="2"/>
+            <path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="#7A0016" stroke-width="2"/>
+            <path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="#7A0016" stroke-width="2"/>
+          </svg>
+        </div>
+        <div style="text-align:left;">
+          <div class="hero-eyebrow">Motor industrial térmico-cuántico &nbsp;·&nbsp; v1.0 web</div>
+          <h1 class="hero-title">Manolito Infinito</h1>
+          <p class="hero-sub" style="max-width:650px;">
+            Herramienta de análisis térmico de materiales, detección visual y traducción a circuito cuántico. Todo en el navegador, sin instalación.
+          </p>
         </div>
       </div>
+      <button class="btn-acceder" id="btn-mostrar-calculadora">Acceder al módulo de cálculo</button>
+      <br>
+      <button class="info-toggle" id="btn-info-toggle">¿Qué es Manolito Infinito? (leer más)</button>
+    </header>
 
-      <div class="panel">
-        <div class="panel-label">03 · Detección automática (imagen / vídeo)</div>
-        <div class="dropzone" id="dropzone">
-          Arrastra una foto o vídeo aquí, o haz clic para elegir archivo
-          <input type="file" id="file-input" accept="image/*,video/*">
-        </div>
-        <div id="preview-container" style="margin-top:12px"></div>
-        <div class="detected-tags" id="detected-tags"></div>
-        <div class="btn-row">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);font-family:var(--font-mono)">
-            <input type="checkbox" id="usar-deteccion" disabled>
-            Usar materiales detectados en el cálculo
-          </label>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn primary" id="btn-calcular">Calcular k_final · Budget · Quantum</button>
-      </div>
-
-      <div class="panel" style="margin-top:20px">
-        <div class="panel-label">Registro</div>
-        <div class="status-log" id="status-log"></div>
+    <!-- Información detallada (oculta por defecto) -->
+    <div id="info-detallada">
+      <div class="panel about-panel">
+        <div class="panel-label">Sobre el proyecto</div>
+        <h2 class="about-title">¿Qué es Manolito Infinito?</h2>
+        <p class="about-text">
+          Manolito Infinito es una herramienta que calcula cómo se comporta
+          térmicamente cualquier superficie —una fachada, un tejado, una calle,
+          una pieza industrial— según de qué materiales está hecha. Te dice
+          cuánto calor pasa a través de ella, cuánto costaría construirla con esos
+          materiales, y además traduce ese resultado a un pequeño circuito
+          cuántico simulado, como una segunda forma —más visual y experimental—
+          de leer la estabilidad térmica del conjunto.
+        </p>
+        <h3 class="about-sub">¿Por qué nace este proyecto?</h3>
+        <p class="about-text">
+          La idea nació de una observación muy simple, casi nocturna: caminando de
+          noche por el asfalto todavía caliente horas después de que se fuera el
+          sol, se hace evidente que ese negro no es un detalle estético — es una
+          trampa térmica. El asfalto absorbe una barbaridad de radiación solar
+          durante el día y la libera muy lentamente durante la noche, y esa simple
+          idea —qué material elijamos cambia cuánto calor acumula y libera una
+          ciudad entera— es la semilla de todo este motor. De ahí surgió la
+          pregunta de fondo: si pudiéramos calcular y comparar materiales de forma
+          rápida y visual, ¿podríamos tomar mejores decisiones antes de construir?
+        </p>
+        <h3 class="about-sub" id="impacto-radiacion">Impacto de la radiación y el calor en los materiales</h3>
+        <p class="about-text">
+          Cada material absorbe, refleja y libera la energía del sol de forma muy
+          distinta. Dos factores lo explican:
+        </p>
+        <ul class="about-list">
+          <li><strong>Albedo (reflectividad):</strong> las superficies claras
+            (hormigón claro, piedra caliza) reflejan buena parte de la radiación
+            solar; las oscuras (asfalto, tejados negros) la absorben casi toda.</li>
+          <li><strong>Conductividad térmica (k):</strong> una vez absorbido el
+            calor, unos materiales lo transmiten y liberan rápido (metales) y
+            otros lo retienen durante horas (asfalto, hormigón masivo), lo que
+            alarga la noche calurosa mucho después de ponerse el sol.</li>
+        </ul>
+        <p class="about-text">
+          Esta combinación es una de las causas principales del llamado
+          <em>efecto isla de calor urbano</em>: ciudades enteras con demasiado
+          asfalto y hormigón oscuro que de noche literalmente no bajan de
+          temperatura al ritmo que debieran. Elegir mejor los materiales —o al
+          menos entender su comportamiento antes de decidir— tiene un impacto real
+          en el confort, el gasto energético y la salud de quien vive ahí. Ese es
+          el problema serio detrás de un motor que, a simple vista, solo hace
+          cuentas de conductividad.
+        </p>
+        <h3 class="about-sub" id="honestidad">Honestidad sobre la precisión de los análisis</h3>
+        <p class="about-text">
+          El detector automático de materiales por imagen/vídeo no es infalible,
+          y no pretendemos que lo parezca. En las primeras versiones, el brillo
+          del sol en una foto se confundía con aluminio (ambos son zonas muy
+          brillantes y poco saturadas de color) — un fallo real que detectamos y
+          corregimos con un filtro específico de sobreexposición. Desde entonces
+          las detecciones son notablemente más precisas, aunque siguen siendo una
+          <strong>estimación por color</strong>, no un análisis de laboratorio: no
+          son correctas al 100% y no deben usarse como sustituto de un ensayo de
+          materiales certificado. Los cálculos térmicos y de presupuesto, en
+          cambio, son matemática determinista (las mismas fórmulas de ingeniería
+          del motor original) y no dependen de ninguna estimación visual —esos
+          números son tan fiables como los datos de conductividad y coste que
+          alimentan el sistema.
+        </p>
+        <h3 class="about-sub" id="version-profesional">Versión profesional con conexión real a IBM Quantum</h3>
+        <p class="about-text">
+          Esta versión web reproduce matemáticamente el mismo circuito cuántico
+          (puerta RY + CNOT sobre 2 qubits) que el motor original en Python, pero
+          lo simula localmente en tu navegador, sin conexión a ningún servicio
+          externo. El motor original de escritorio, en cambio, sí puede
+          ejecutarse contra <strong>hardware cuántico real de IBM Quantum</strong>
+          a través de Qiskit, para quien quiera ir un paso más allá de la
+          simulación. Si te interesa esa versión profesional —con ejecución en
+          qubits reales, no solo simulados— escríbeme a
+          <a href="mailto:sandro.a007@gmail.com">sandro.a007@gmail.com</a> y lo
+          hablamos.
+        </p>
       </div>
     </div>
+  </div>
 
-    <!-- COLUMNA DERECHA: RESULTADOS + MANOLITO -->
-    <div>
-      <div class="panel" id="resultados-panel" style="display:none">
-        <div class="panel-label">Resultado térmico</div>
-        <div class="k-readout" id="k-readout">— <span class="unit">W/(m·K)</span></div>
-        <div class="thermo-gauge">
-          <div class="thermo-needle" id="thermo-needle" style="left:0%"></div>
+  <!-- ===================== FASE 2: CALCULADORA ===================== -->
+  <div id="fase-calculadora">
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-label">Módulo de cálculo termofísico + circuito cuántico</div>
+      <p style="margin:0; font-size:0.95rem; color:var(--text-mid);">
+        Configure el área, los materiales y las condiciones. El sistema calculará la conductividad ponderada, el presupuesto, el flujo térmico y el correspondiente estado cuántico de 2 qubits. Los resultados se mostrarán al pulsar “Calcular”.
+      </p>
+    </div>
+
+    <div class="grid-main">
+      <!-- COLUMNA IZQUIERDA: ENTRADA DE DATOS -->
+      <div>
+        <div class="panel">
+          <div class="panel-label">01 · Área y condiciones</div>
+          <label class="field-label">Área (m²)</label>
+          <input type="number" id="input-area" value="100" min="1" step="1">
+          <div style="height:10px"></div>
+          <label class="field-label">Diferencia de temperatura ΔT (°C)</label>
+          <input type="number" id="input-tempdiff" value="20" min="0" step="1">
         </div>
-        <div class="thermo-labels"><span>Frío / aislante</span><span>Alta conductividad</span></div>
 
-        <div class="result-grid">
-          <div class="result-card"><div class="rc-label">Budget total</div><div class="rc-value" id="result-budget">—</div></div>
-          <div class="result-card"><div class="rc-label">Flujo térmico</div><div class="rc-value" id="result-flux">—</div></div>
-          <div class="result-card"><div class="rc-label">Eficiencia</div><div class="rc-value" id="result-efficiency">—</div></div>
-          <div class="result-card"><div class="rc-label">Theta (RY)</div><div class="rc-value" id="result-theta">—</div></div>
-          <div class="result-card"><div class="rc-label">Estabilidad |00&gt;</div><div class="rc-value" id="result-estabilidad">—</div></div>
+        <div class="panel">
+          <div class="panel-label">02 · Mezcla de materiales (manual)</div>
+          <div id="material-selector"></div>
+          <div class="mix-total" id="mix-total">Suma actual: 0% (debe ser 100%)</div>
+          <div class="btn-row">
+            <button class="btn" id="btn-autorrellenar">Repartir % iguales</button>
+          </div>
         </div>
-        <div id="result-nivel" style="margin-top:10px;font-family:var(--font-mono);font-size:13px"></div>
 
-        <div class="qcircuit">
-          <div class="panel-label" style="margin-bottom:8px">Circuito: RY(θ) → CNOT → Medición</div>
-          <div class="qbars" id="qbars"></div>
+        <div class="panel">
+          <div class="panel-label">03 · Detección automática (imagen / vídeo)</div>
+          <div class="dropzone" id="dropzone">
+            Arrastra una foto o vídeo aquí, o haz clic para elegir archivo
+            <input type="file" id="file-input" accept="image/*,video/*">
+          </div>
+          <div id="preview-container" style="margin-top:12px"></div>
+          <div class="detected-tags" id="detected-tags"></div>
+          <div class="btn-row">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);font-family:var(--font-mono)">
+              <input type="checkbox" id="usar-deteccion" disabled>
+              Usar materiales detectados en el cálculo
+            </label>
+          </div>
         </div>
 
         <div class="btn-row">
-          <button class="btn" id="btn-export-json">Exportar JSON</button>
-          <button class="btn" id="btn-export-csv">Exportar CSV</button>
-          <button class="btn" id="btn-export-pdf">Exportar PDF</button>
+          <button class="btn primary" id="btn-calcular">Calcular k_final · Budget · Quantum</button>
+        </div>
+
+        <div class="panel" style="margin-top:20px">
+          <div class="panel-label">Registro</div>
+          <div class="status-log" id="status-log"></div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-label">Manolito Infinito — consulta</div>
-        <div class="chat-window" id="chat-window">
-          <div class="chat-msg">
-            <div class="who">Manolito</div>
-            <div>Buenas, compadre! Pregúntame por k_final, budget, lo cuántico, la estabilidad o el filtro anti-sol — puedes escribirme en español, inglés, francés, italiano, portugués o alemán, que te entiendo igual.</div>
+      <!-- COLUMNA DERECHA: RESULTADOS + CHAT -->
+      <div>
+        <div class="panel" id="resultados-panel" style="display:none">
+          <div class="panel-label">Resultado térmico</div>
+          <div class="k-readout" id="k-readout">— <span class="unit">W/(m·K)</span></div>
+          <div class="thermo-gauge">
+            <div class="thermo-needle" id="thermo-needle" style="left:0%"></div>
+          </div>
+          <div class="thermo-labels"><span>Frío / aislante</span><span>Alta conductividad</span></div>
+
+          <div class="result-grid">
+            <div class="result-card"><div class="rc-label">Budget total</div><div class="rc-value" id="result-budget">—</div></div>
+            <div class="result-card"><div class="rc-label">Flujo térmico</div><div class="rc-value" id="result-flux">—</div></div>
+            <div class="result-card"><div class="rc-label">Eficiencia</div><div class="rc-value" id="result-efficiency">—</div></div>
+            <div class="result-card"><div class="rc-label">Theta (RY)</div><div class="rc-value" id="result-theta">—</div></div>
+            <div class="result-card"><div class="rc-label">Estabilidad |00&gt;</div><div class="rc-value" id="result-estabilidad">—</div></div>
+          </div>
+          <div id="result-nivel" style="margin-top:10px;font-family:var(--font-mono);font-size:13px"></div>
+
+          <div class="qcircuit">
+            <div class="panel-label" style="margin-bottom:8px">Circuito: RY(θ) → CNOT → Medición</div>
+            <div class="qbars" id="qbars"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" id="btn-export-json">Exportar JSON</button>
+            <button class="btn" id="btn-export-csv">Exportar CSV</button>
+            <button class="btn" id="btn-export-pdf">Exportar PDF</button>
           </div>
         </div>
-        <div class="chat-input-row">
-          <input type="text" id="chat-input" placeholder="Escribe tu pregunta...">
-          <button class="btn" id="chat-send">Enviar</button>
+
+        <div class="panel">
+          <div class="panel-label">Manolito Infinito — consulta</div>
+          <div class="chat-window" id="chat-window">
+            <div class="chat-msg">
+              <div class="who">Manolito</div>
+              <div>Buenas, compadre! Pregúntame por k_final, budget, lo cuántico, la estabilidad o el filtro anti-sol — puedes escribirme en español, inglés, francés, italiano, portugués o alemán, que te entiendo igual.</div>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="chat-input" placeholder="Escribe tu pregunta...">
+            <button class="btn" id="chat-send">Enviar</button>
+          </div>
         </div>
       </div>
     </div>
@@ -219,6 +302,29 @@
   </footer>
 </div>
 
+<!-- ===== SCRIPTS PROPIOS (sin tocar los tuyos) ===== -->
+<script>
+  // Mostrar / ocultar la calculadora
+  document.getElementById('btn-mostrar-calculadora').addEventListener('click', function() {
+    document.getElementById('fase-calculadora').style.display = 'block';
+    // Scroll suave hacia la calculadora
+    document.getElementById('fase-calculadora').scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Mostrar / ocultar la información detallada
+  document.getElementById('btn-info-toggle').addEventListener('click', function() {
+    var info = document.getElementById('info-detallada');
+    if (info.style.display === 'none' || info.style.display === '') {
+      info.style.display = 'block';
+      this.textContent = 'Ocultar información';
+    } else {
+      info.style.display = 'none';
+      this.textContent = '¿Qué es Manolito Infinito? (leer más)';
+    }
+  });
+</script>
+
+<!-- Tus archivos JS originales (se cargan igual) -->
 <script src="js/constants.js"></script>
 <script src="js/thermal.js"></script>
 <script src="js/detector.js"></script>
@@ -227,5 +333,6 @@
 <script src="js/export.js"></script>
 <script src="js/privacy.js"></script>
 <script src="js/app.js"></script>
+
 </body>
 </html>
