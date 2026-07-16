@@ -11,6 +11,7 @@
       --paleta-teal: #007A87;
       --paleta-granate: #7A0016;
       --paleta-fondo: #030303;
+      --paleta-panel: #0b0b0b;
     }
 
     #intro-overlay {
@@ -18,32 +19,43 @@
       background: var(--paleta-fondo);
       transition: opacity 0.8s ease;
       display: flex; align-items: center; justify-content: center;
-      overflow: hidden; /* Evita scrolls accidentales por elementos flotantes */
+      overflow: hidden;
     }
     #intro-overlay.oculto { opacity: 0; pointer-events: none; }
-    
-    #aether-field, #waves-canvas { 
-      position: absolute; top: 0; left: 0; 
-      width: 100%; height: 100%; 
+
+    #aether-field, #waves-canvas {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
     }
     #aether-field { z-index: 1; }
     #waves-canvas { z-index: 15; pointer-events: none; }
 
-    #intro-logo {
-      position: absolute;
+    #intro-logo-wrap {
+      position: absolute; left: 50%; top: 50%; z-index: 20;
       width: 120px; height: 180px;
-      left: 50%; top: 50%;
-      transform: translate(-50%, -50%) rotate(0deg);
-      z-index: 20;
-      cursor: grab; user-select: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
+    }
+    #intro-logo-wrap.arrastrando { transition: none; }
+    #intro-logo {
+      width: 100%; height: 100%;
+      cursor: grab; user-select: none; touch-action: none;
       filter: grayscale(1) brightness(0.25);
       transition: filter 0.8s ease;
     }
     #intro-logo:active { cursor: grabbing; }
     #intro-logo:hover { filter: grayscale(0) brightness(1.2); }
-    #intro-logo svg {
-      width: 100%; height: 100%; display: block;
+    #intro-logo svg { width: 100%; height: 100%; display: block; overflow: visible; }
+
+    #intro-hint {
+      position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%);
+      z-index: 20; font-family: var(--font-mono, monospace);
+      font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(197,160,89,0.5); pointer-events: none;
+      animation: hintPulse 2.6s ease-in-out infinite;
     }
+    @keyframes hintPulse { 0%,100%{opacity:.35} 50%{opacity:.8} }
 
     #lens {
       position: absolute; pointer-events: none;
@@ -53,7 +65,7 @@
       background: radial-gradient(circle, rgba(197,160,89,0.4) 0%, transparent 80%);
       box-shadow: 0 0 10px var(--paleta-dorado);
       z-index: 30; mix-blend-mode: screen; overflow: hidden;
-      left: -50px; top: -50px; /* Fuera de la vista inicial */
+      left: -50px; top: -50px;
       opacity: 0;
       transition: opacity 0.2s ease;
     }
@@ -95,26 +107,84 @@
       color: var(--paleta-dorado); text-decoration: underline; cursor: pointer;
       background: none; border: none; font-size: 0.95rem; margin-top: 15px; display: inline-block;
     }
+
+    .historia-texto p { line-height: 1.85; margin-bottom: 16px; font-size: 0.98rem; }
+    .historia-texto p.destacado {
+      border-left: 2px solid var(--paleta-dorado);
+      padding-left: 16px; font-style: italic; color: rgba(197,160,89,0.9);
+      margin: 22px 0;
+    }
+    .firma-proyecto {
+      margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(197,160,89,0.25);
+      font-family: var(--font-mono); font-size: 0.82rem; color: rgba(197,160,89,0.6);
+      letter-spacing: 0.5px;
+    }
+
+    #material-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .material-card {
+      border: 1px solid rgba(197,160,89,0.22);
+      background: var(--paleta-panel);
+      border-radius: 6px;
+      padding: 14px 12px 12px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      transition: border-color .2s ease, background .2s ease;
+    }
+    .material-card:hover { border-color: var(--paleta-dorado); background: rgba(197,160,89,0.04); }
+    .material-icon { width: 34px; height: 34px; color: var(--paleta-dorado); opacity: .9; }
+    .material-icon svg { width: 100%; height: 100%; display: block; }
+    .material-nombre {
+      font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.5px;
+      color: #e8e2d4; text-align: center; text-transform: uppercase;
+    }
+    .material-slider-row {
+      width: 100%; display: flex; align-items: center; gap: 8px; margin-top: 2px;
+    }
+    .material-slider-row input[type="range"] {
+      flex: 1; accent-color: var(--paleta-dorado); height: 3px;
+    }
+    .material-pct {
+      width: 42px; text-align: right; font-family: var(--font-mono);
+      font-size: 0.78rem; color: var(--paleta-dorado);
+    }
+    .mix-total {
+      margin-top: 14px; font-family: var(--font-mono); font-size: 0.82rem;
+      color: rgba(197,160,89,0.75); text-align: right;
+    }
+    .mix-total.ok { color: #6fd48a; }
+
+    footer {
+      margin-top: 60px; padding: 22px 20px 30px;
+      border-top: 1px solid rgba(197,160,89,0.25);
+      text-align: center; font-size: 0.82rem; color: rgba(197,160,89,0.55);
+    }
+    footer a { color: var(--paleta-dorado); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body class="modo-ciudadano">
 
-<!-- INTRO -->
 <div id="intro-overlay">
   <canvas id="aether-field"></canvas>
   <canvas id="waves-canvas"></canvas>
   <div id="lens"></div>
-  <div id="intro-logo" title="Arrastra, gira con la rueda, doble clic para entrar">
-    <svg viewBox="0 0 200 300">
-      <circle cx="100" cy="150" r="45" stroke="var(--paleta-dorado)" stroke-width="2" fill="none" />
-      <path d="M 60,165 Q 80,155 100,165 T 140,165 M 65,175 Q 82.5,167 100,175 T 135,175" fill="none" stroke="var(--paleta-teal)" stroke-width="2"/>
-      <path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
-      <path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
-    </svg>
+  <div id="intro-logo-wrap">
+    <div id="intro-logo" title="Arrastra para moverlo, rueda para girarlo, doble clic para entrar">
+      <svg viewBox="0 0 200 300">
+        <circle cx="100" cy="150" r="45" stroke="var(--paleta-dorado)" stroke-width="2" fill="none" />
+        <path d="M 60,165 Q 80,155 100,165 T 140,165 M 65,175 Q 82.5,167 100,175 T 135,175" fill="none" stroke="var(--paleta-teal)" stroke-width="2"/>
+        <path d="M 100,150 C 75,125 75,175 100,150 C 125,125 125,175 100,150 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
+        <path d="M 100,30 C 30,110 30,210 100,290 C 170,210 170,110 100,30 Z" fill="none" stroke="var(--paleta-granate)" stroke-width="2"/>
+      </svg>
+    </div>
   </div>
+  <div id="intro-hint">arrastra el sigilo · doble clic para entrar</div>
 </div>
 
-<!-- CONTENIDO PRINCIPAL -->
 <div class="blueprint-frame" style="padding-bottom: 40px;">
   <span class="corner-mark tl"></span>
   <span class="corner-mark tr"></span>
@@ -134,32 +204,88 @@
     <button class="modo-toggle" id="btn-modo">Modo científico</button>
   </header>
 
-  <!-- SECCIÓN HISTORIA -->
   <section id="seccion-historia" class="seccion activa">
     <div class="panel about-panel">
       <div class="panel-label">Historia del proyecto</div>
-      <div class="modo-texto texto-ciudadano">
-        <p>Manolito Infinito nació de una observación simple: el asfalto sigue caliente después del atardecer. Nos preguntamos si, conociendo los materiales, podríamos predecir cuánto calor acumulan y cómo enfriar las ciudades.</p>
-        <p>Une física térmica y computación cuántica para visualizar la estabilidad de una mezcla. Todo funciona en el navegador, sin instalar nada.</p>
-        <button class="info-toggle" id="btn-historia-mas">Leer la historia completa</button>
+
+      <div class="modo-texto texto-ciudadano historia-texto">
+        <p>Manolito Infinito no nació en un laboratorio ni en una sala de reuniones. Nació una noche
+        de agosto, volviendo a casa por una calle de Sevilla donde el asfalto, horas después de que
+        se hubiera puesto el sol, seguía devolviendo calor como si se negara a soltarlo. Esa
+        sensación —caminar sobre algo que parece respirar calor en plena noche— fue la pregunta que
+        empezó todo esto: ¿por qué seguimos eligiendo, una y otra vez, los materiales que peor nos
+        tratan?</p>
+
+        <p>No soy programador. Lo digo sin vergüenza y, de hecho, creo que merece la pena decirlo.
+        Todo lo que hay detrás de esta herramienta —el motor térmico, el pequeño circuito cuántico,
+        la calculadora que tienes al lado— ha salido de meses de preguntar, equivocarme y volver a
+        preguntar, con la ayuda de una inteligencia artificial que me ha permitido no quemarme la
+        cabeza en cada línea de código que no sabía escribir. No lo escondo porque no hay nada que
+        esconder: la idea, la obsesión y el "por qué" de este proyecto son míos. El "cómo" ha sido
+        un trabajo de equipo entre una persona con una pregunta y una herramienta paciente que sabía
+        traducirla en fórmulas.</p>
+
+        <p class="destacado">Quizás esa sea, sin que lo buscara, la otra historia que cuenta este
+        proyecto: que las herramientas más potentes que tenemos ahora ya no están reservadas para
+        quien ya sabía programar. Están para cualquiera que tenga una pregunta real y la voluntad de
+        no soltarla.</p>
+
+        <p>El nombre "Manolito Infinito" es, a propósito, un poco absurdo. Detrás de un proyecto que
+        cruza física térmica con probabilidad cuántica hay una intención muy simple: que esto no se
+        sienta como algo frío, de laboratorio, reservado a quien tiene un título. Que un vecino
+        cualquiera pueda entrar, mover un par de deslizadores y entender, sin tecnicismos, por qué su
+        calle se convierte en un horno cada agosto.</p>
+
+        <p>Confío en que quien use esto —vecinos, técnicos municipales, estudiantes, simples
+        curiosos— le dé el uso honesto para el que fue pensado: entender un poco mejor cómo cuidamos,
+        o no cuidamos, nuestras propias ciudades. No tengo forma de controlar eso, y está bien que
+        sea así. Solo espero, como espero de casi todo lo que se comparte libremente, que la balanza
+        caiga del lado bueno. Todavía creo que la mayoría de quien se molesta en llegar hasta aquí y
+        leer esto lo hace con curiosidad genuina, no con mala intención. Ese pequeño voto de
+        confianza, quizá algo ingenuo, forma parte de este proyecto tanto como cualquier fórmula de
+        conductividad térmica que vas a encontrar más abajo.</p>
+
+        <button class="info-toggle" id="btn-historia-mas">Leer un poco más</button>
         <div id="historia-completa" style="display:none; margin-top:15px;">
-          <p>La idea nació una noche caminando sobre asfalto caliente. El color oscuro absorbe radiación y la libera lentamente, creando islas de calor. Con esta herramienta calculamos la conductividad ponderada, el presupuesto y lo traducimos a un circuito cuántico de 2 qubits.</p>
-          <p>La versión web simula el circuito; la profesional (Python) se conecta a hardware real de IBM Quantum.</p>
+          <p>La primera versión de esta idea era mucho más torpe: una hoja de cálculo con tres
+          colores de asfalto y una fórmula copiada de un manual de física de bachillerato. No
+          funcionaba bien, pero funcionaba lo suficiente para no dejarla morir. De ahí pasó a un
+          prototipo web, luego a un pequeño detector de materiales por imagen, y finalmente a este
+          motor que combina conductividad térmica real con un circuito cuántico de 2 qubits que
+          traduce esa estabilidad en algo visual y comprensible.</p>
+          <p>La versión que tienes delante corre entera en tu navegador, sin servidores ni
+          instalaciones. La versión profesional, en Python, va un paso más allá: se conecta a
+          hardware cuántico real de IBM Quantum. Ambas nacieron de la misma pregunta de una noche de
+          verano, solo que una de ellas tardó bastante más en responder.</p>
         </div>
+
+        <div class="firma-proyecto">— Sevilla, hecho con más curiosidad que experiencia, y con
+        ayuda de la IA para no perderme por el camino.</div>
       </div>
+
       <div class="modo-texto texto-cientifico" style="display:none;">
-        <p>Motor de cálculo termofísico con traducción a circuito cuántico. Aplica ley de Fourier, ponderación de conductividades y mapeo a puerta RY con entrelazamiento CNOT sobre 2 qubits.</p>
-        <p>El detector de materiales usa espacio HSV con filtro de sobreexposición. Resultados deterministas; la detección visual es una estimación no certificada.</p>
+        <p>Motor de cálculo termofísico con traducción a circuito cuántico. Aplica ley de Fourier,
+        ponderación de conductividades por fracción de área y mapeo a puerta RY con entrelazamiento
+        CNOT sobre un registro de 2 qubits, cuya probabilidad final de colapso en |00⟩ se interpreta
+        como índice de estabilidad térmica de la mezcla evaluada.</p>
+        <p>El detector de materiales opera en espacio de color HSV con filtro de descarte para
+        píxeles sobreexpuestos o subexpuestos. Los resultados del motor termofísico y del circuito
+        cuántico son deterministas y reproducibles; la detección visual de materiales es una
+        estimación asistida, no una medición certificada, y se ofrece siempre como sugerencia
+        editable antes de entrar en el cálculo final.</p>
       </div>
     </div>
   </section>
 
-  <!-- SECCIÓN MOTOR -->
   <section id="seccion-motor" class="seccion">
     <div class="panel" style="margin-bottom:20px;">
       <div class="panel-label">Módulo de cálculo termofísico + circuito cuántico</div>
-      <div class="modo-texto texto-ciudadano"><p>Elige materiales, ajusta porcentajes o sube una foto. Obtendrás calor transmitido, presupuesto y estabilidad cuántica.</p></div>
-      <div class="modo-texto texto-cientifico" style="display:none;"><p>Configure área, materiales y condiciones. Se calculará conductividad ponderada, flujo térmico, presupuesto y estado cuántico de 2 qubits.</p></div>
+      <div class="modo-texto texto-ciudadano"><p>Elige materiales, ajusta sus proporciones o sube una
+      foto. Obtendrás el calor transmitido, el presupuesto asociado y la estabilidad cuántica de la
+      mezcla.</p></div>
+      <div class="modo-texto texto-cientifico" style="display:none;"><p>Configure área, materiales y
+      condiciones. Se calculará conductividad ponderada, flujo térmico, presupuesto y estado cuántico
+      de 2 qubits.</p></div>
     </div>
     <div class="grid-main" id="calculadora">
       <div>
@@ -169,12 +295,75 @@
           <div style="height:10px"></div>
           <label class="field-label">Diferencia de temperatura ΔT (°C)</label><input type="number" id="input-tempdiff" value="20" min="0" step="1">
         </div>
+
         <div class="panel">
-          <div class="panel-label">02 · Mezcla de materiales (manual)</div>
-          <div id="material-selector"></div>
-          <div class="mix-total" id="mix-total">Suma actual: 0% (debe ser 100%)</div>
+          <div class="panel-label">02 · Mezcla de materiales</div>
+          <div id="material-selector">
+            <div class="material-card" data-material="asfalto">
+              <div class="material-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="9" width="20" height="6" rx="1"/><line x1="6" y1="12" x2="9" y2="12"/><line x1="12" y1="12" x2="15" y2="12"/><line x1="18" y1="12" x2="21" y2="12"/></svg>
+              </div>
+              <div class="material-nombre">Asfalto</div>
+              <div class="material-slider-row">
+                <input type="range" min="0" max="100" value="40" class="mat-range" data-material="asfalto">
+                <span class="material-pct" data-material="asfalto">40%</span>
+              </div>
+            </div>
+            <div class="material-card" data-material="hormigon">
+              <div class="material-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="8" height="6"/><rect x="10" y="4" width="8" height="6"/><rect x="18" y="4" width="4" height="6"/><rect x="2" y="10" width="4" height="6"/><rect x="6" y="10" width="8" height="6"/><rect x="14" y="10" width="8" height="6"/><rect x="2" y="16" width="8" height="4"/><rect x="10" y="16" width="8" height="4"/><rect x="18" y="16" width="4" height="4"/></svg>
+              </div>
+              <div class="material-nombre">Hormigón</div>
+              <div class="material-slider-row">
+                <input type="range" min="0" max="100" value="20" class="mat-range" data-material="hormigon">
+                <span class="material-pct" data-material="hormigon">20%</span>
+              </div>
+            </div>
+            <div class="material-card" data-material="vegetacion">
+              <div class="material-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V11"/><path d="M12 11c0-5 4-8 7-8 0 5-2 8-7 8Z"/><path d="M12 14c0-4-3-6-6-6 0 4 2 6 6 6Z"/></svg>
+              </div>
+              <div class="material-nombre">Vegetación</div>
+              <div class="material-slider-row">
+                <input type="range" min="0" max="100" value="15" class="mat-range" data-material="vegetacion">
+                <span class="material-pct" data-material="vegetacion">15%</span>
+              </div>
+            </div>
+            <div class="material-card" data-material="cesped">
+              <div class="material-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V13"/><path d="M8 20V10"/><path d="M12 20V13"/><path d="M16 20V9"/><path d="M20 20V13"/></svg>
+              </div>
+              <div class="material-nombre">Césped</div>
+              <div class="material-slider-row">
+                <input type="range" min="0" max="100" value="10" class="mat-range" data-material="cesped">
+                <span class="material-pct" data-material="cesped">10%</span>
+              </div>
+            </div>
+            <div class="material-card" data-material="agua">
+              <div class="material-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0 4 2 4 0"/><path d="M2 17c2-2 4-2 6 0s4 2 6 0 4-2 6 0 4 2 4 0"/></svg>
+              </div>
+              <div class="material-nombre">Agua</div>
+              <div class="material-slider-row">
+                <input type="range" min="0" max="100" value="10" class="mat-range" data-material="agua">
+                <span class="material-pct" data-material="agua">10%</span>
+              </div>
+            </div>
+            <div class="material-card" data-material="suelo">
+              <div class="material-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="2" y1="8" x2="22" y2="8"/><line x1="2" y1="13" x2="22" y2="13"/><line x1="2" y1="18" x2="22" y2="18"/></svg>
+              </div>
+              <div class="material-nombre">Suelo desnudo</div>
+              <div class="material-slider-row">
+                <input type="range" min="0" max="100" value="5" class="mat-range" data-material="suelo">
+                <span class="material-pct" data-material="suelo">5%</span>
+              </div>
+            </div>
+          </div>
+          <div class="mix-total" id="mix-total">Suma actual: 100% (correcto)</div>
           <div class="btn-row"><button class="btn" id="btn-autorrellenar">Repartir % iguales</button></div>
         </div>
+
         <div class="panel">
           <div class="panel-label">03 · Detección automática (imagen / vídeo)</div>
           <div class="dropzone" id="dropzone">Arrastra una foto o vídeo aquí, o haz clic para elegir archivo<input type="file" id="file-input" accept="image/*,video/*"></div>
@@ -215,7 +404,6 @@
     </div>
   </section>
 
-  <!-- SECCIÓN CONTACTO -->
   <section id="seccion-contacto" class="seccion">
     <div class="panel" style="text-align:center;">
       <div class="panel-label">Versión profesional y contacto</div>
@@ -233,7 +421,6 @@
 </div>
 
 <script>
-  // ===== PALETA ALEATORIA =====
   const paletas = [
     { dorado: '#C5A059', teal: '#007A87', granate: '#7A0016' },
     { dorado: '#B8860B', teal: '#2E8B57', granate: '#8B0000' },
@@ -244,7 +431,6 @@
   document.documentElement.style.setProperty('--paleta-teal', p.teal);
   document.documentElement.style.setProperty('--paleta-granate', p.granate);
 
-  // ===== PARTÍCULAS DE FONDO =====
   const canvasFondo = document.getElementById('aether-field');
   const ctxFondo = canvasFondo.getContext('2d');
   let particles = [];
@@ -262,17 +448,13 @@
   }
   drawParticles();
 
-  // ===== ONDAS (CANVAS FULLSCREEN AHORA) =====
+  const logoWrap = document.getElementById('intro-logo-wrap');
   const logo = document.getElementById('intro-logo');
   const lens = document.getElementById('lens');
   const wavesCanvas = document.getElementById('waves-canvas');
   const ctxWaves = wavesCanvas.getContext('2d');
 
-  function updateWavesSize() {
-    // AHORA EL CANVAS MIDE TODA LA PANTALLA, NO SOLO 120X180
-    wavesCanvas.width = window.innerWidth;
-    wavesCanvas.height = window.innerHeight;
-  }
+  function updateWavesSize() { wavesCanvas.width = window.innerWidth; wavesCanvas.height = window.innerHeight; }
   updateWavesSize();
   window.addEventListener('resize', updateWavesSize);
 
@@ -287,7 +469,7 @@
   function createWaveParticle(x, y) {
     const glyph = glyphs[Math.floor(Math.random() * glyphs.length)];
     const angle = Math.random() * Math.PI * 2;
-    const speed = 1 + Math.random() * 3.0; // Un poco más rápido para que se expanda bien
+    const speed = 1 + Math.random() * 3.0;
     return {
       x, y, glyph,
       size: 10 + Math.random() * 8,
@@ -300,7 +482,6 @@
     };
   }
 
-  // Ahora recibe coordenadas de pantalla (clientX, clientY)
   function emitWaves(x, y) {
     for (let i = 0; i < 8; i++) waveParticles.push(createWaveParticle(x, y));
   }
@@ -320,93 +501,69 @@
   }
   animateWaves();
 
-  function updateLens(clientX, clientY) {
-    const rect = logo.getBoundingClientRect();
-    
-    // Mostramos la lupa solo si estamos sobre el logo, pero no encerramos la matemática
-    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) {
-      if(!dragging) lens.style.opacity = '0';
-    } else {
-      lens.style.opacity = '1';
-    }
-
-    // La lupa ahora sigue libremente al ratón por toda la pantalla sin Math.min limitándola
-    lens.style.left = (clientX - 15) + 'px';
-    lens.style.top = (clientY - 15) + 'px';
-  }
-
-  // Evento global
   window.addEventListener('mousemove', (e) => {
-    updateLens(e.clientX, e.clientY);
-    if (isEmitting && waveParticles.length < 150) {
-      const rect = logo.getBoundingClientRect();
-      // Emitir ondas solo si el ratón está cerca del logo durante el drag
-      if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-        emitWaves(e.clientX, e.clientY);
-      }
-    }
+    const rect = logo.getBoundingClientRect();
+    const dentro = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+    if (!dragging) lens.style.opacity = dentro ? '1' : '0';
+    lens.style.left = (e.clientX - 15) + 'px';
+    lens.style.top = (e.clientY - 15) + 'px';
+    if (isEmitting && waveParticles.length < 150) emitWaves(e.clientX, e.clientY);
   });
 
-  // ===== ARRASTRE DEL LOGO =====
-  let dragging = false, startX, startY, startLeft, startTop, rotation = 0;
+  let dragging = false;
+  let offsetX = 0, offsetY = 0;
   let velocityX = 0, velocityY = 0;
-  const overlay = document.getElementById('intro-overlay');
+  let rotation = 0;
+  let lastMoveX = 0, lastMoveY = 0;
 
-  logo.addEventListener('mousedown', (e) => {
+  function applyTransform() {
+    logoWrap.style.transform = `translate(-50%, -50%) translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+  }
+
+  logo.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     dragging = true;
     isEmitting = true;
-    startX = e.clientX; startY = e.clientY;
-    
-    const rect = logo.getBoundingClientRect();
-    startLeft = rect.left; 
-    startTop = rect.top;
-    
-    logo.style.transition = 'none';
-    logo.style.left = startLeft + 'px';
-    logo.style.top = startTop + 'px';
-    logo.style.transform = `rotate(${rotation}deg)`; 
-    
+    logoWrap.classList.add('arrastrando');
+    logo.setPointerCapture(e.pointerId);
+    lastMoveX = e.clientX; lastMoveY = e.clientY;
     velocityX = 0; velocityY = 0;
     emitWaves(e.clientX, e.clientY);
   });
 
-  window.addEventListener('mousemove', (e) => {
+  window.addEventListener('pointermove', (e) => {
     if (!dragging) return;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    logo.style.left = (startLeft + dx) + 'px';
-    logo.style.top = (startTop + dy) + 'px';
-    logo.style.transform = `rotate(${rotation}deg)`;
-    velocityX = dx * 0.15;
-    velocityY = dy * 0.15;
-    startX = e.clientX; startY = e.clientY;
-    startLeft = parseFloat(logo.style.left);
-    startTop = parseFloat(logo.style.top);
+    offsetX += e.clientX - lastMoveX;
+    offsetY += e.clientY - lastMoveY;
+    velocityX = (e.clientX - lastMoveX) * 0.6;
+    velocityY = (e.clientY - lastMoveY) * 0.6;
+    lastMoveX = e.clientX; lastMoveY = e.clientY;
+    applyTransform();
   });
 
-  window.addEventListener('mouseup', () => {
+  function terminarArrastre() {
     if (!dragging) return;
     dragging = false;
     isEmitting = false;
-    function applyInertia() {
-      if (Math.abs(velocityX) < 0.01 && Math.abs(velocityY) < 0.01) {
-        logo.style.transition = 'left 0.6s cubic-bezier(0.25,0.8,0.25,1.2), top 0.6s cubic-bezier(0.25,0.8,0.25,1.2), transform 0.6s ease';
-        logo.style.left = '50%';
-        logo.style.top = '50%';
-        logo.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-        setTimeout(() => logo.style.transition = 'filter 0.8s ease', 600);
+
+    function inercia() {
+      if (Math.abs(velocityX) < 0.15 && Math.abs(velocityY) < 0.15) {
+        logoWrap.classList.remove('arrastrando');
+        offsetX = 0; offsetY = 0;
+        applyTransform();
         return;
       }
-      logo.style.left = (parseFloat(logo.style.left) + velocityX) + 'px';
-      logo.style.top = (parseFloat(logo.style.top) + velocityY) + 'px';
-      logo.style.transform = `rotate(${rotation}deg)`;
-      velocityX *= 0.92;
-      velocityY *= 0.92;
-      requestAnimationFrame(applyInertia);
+      logoWrap.classList.add('arrastrando');
+      offsetX += velocityX; offsetY += velocityY;
+      velocityX *= 0.9; velocityY *= 0.9;
+      applyTransform();
+      requestAnimationFrame(inercia);
     }
-    applyInertia();
-  });
+    requestAnimationFrame(inercia);
+    setTimeout(() => { logoWrap.classList.remove('arrastrando'); offsetX = 0; offsetY = 0; applyTransform(); }, 260);
+  }
+  window.addEventListener('pointerup', terminarArrastre);
+  window.addEventListener('pointercancel', terminarArrastre);
 
   logo.addEventListener('click', (e) => {
     for (let i = 0; i < 12; i++) waveParticles.push(createWaveParticle(e.clientX, e.clientY));
@@ -415,15 +572,10 @@
   logo.addEventListener('wheel', (e) => {
     e.preventDefault();
     rotation += e.deltaY > 0 ? 15 : -15;
-    if (!dragging) {
-      logo.style.transition = 'transform 0.2s ease';
-      logo.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-      setTimeout(() => logo.style.transition = 'filter 0.8s ease', 200);
-    } else {
-      logo.style.transform = `rotate(${rotation}deg)`;
-    }
-  });
+    applyTransform();
+  }, { passive: false });
 
+  const overlay = document.getElementById('intro-overlay');
   function hideIntro() {
     overlay.classList.add('oculto');
     setTimeout(() => overlay.style.display = 'none', 800);
@@ -436,7 +588,6 @@
     hideIntro();
   });
 
-  // ===== INTERFAZ RESTANTE =====
   function mostrarSeccion(id) {
     document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
     document.getElementById(id).classList.add('activa');
@@ -459,11 +610,38 @@
     const c = document.getElementById('historia-completa');
     if (c.style.display === 'none' || !c.style.display) {
       c.style.display = 'block';
-      this.textContent = 'Ocultar historia completa';
+      this.textContent = 'Ocultar';
     } else {
       c.style.display = 'none';
-      this.textContent = 'Leer la historia completa';
+      this.textContent = 'Leer un poco más';
     }
+  });
+
+  const mixTotalEl = document.getElementById('mix-total');
+  function recalcularMezcla() {
+    let total = 0;
+    document.querySelectorAll('.mat-range').forEach(input => {
+      const mat = input.dataset.material;
+      const val = parseInt(input.value, 10);
+      total += val;
+      const label = document.querySelector('.material-pct[data-material="' + mat + '"]');
+      if (label) label.textContent = val + '%';
+    });
+    mixTotalEl.textContent = 'Suma actual: ' + total + '% ' + (total === 100 ? '(correcto)' : '(debe ser 100%)');
+    mixTotalEl.classList.toggle('ok', total === 100);
+    window.materialMix = Object.fromEntries(
+      Array.from(document.querySelectorAll('.mat-range')).map(i => [i.dataset.material, parseInt(i.value, 10)])
+    );
+  }
+  document.querySelectorAll('.mat-range').forEach(input => input.addEventListener('input', recalcularMezcla));
+  recalcularMezcla();
+
+  document.getElementById('btn-autorrellenar').addEventListener('click', () => {
+    const inputs = document.querySelectorAll('.mat-range');
+    const igual = Math.floor(100 / inputs.length);
+    let resto = 100 - igual * inputs.length;
+    inputs.forEach((input, i) => { input.value = igual + (i === 0 ? resto : 0); });
+    recalcularMezcla();
   });
 </script>
 
