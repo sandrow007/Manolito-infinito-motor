@@ -4,13 +4,20 @@
    - Consulta de noticias reales en vivo mediante API pública de Wikipedia (Sin registro).
    - Traducción dinámica mediante API pública de MyMemory (Sin registro) para idiomas no locales.
    - Salero sevillano integrado con rigor técnico.
+   - NUEVO: Fallback a IA generativa (Pollinations, sin key) para CUALQUIER pregunta
+     que no caiga dentro de las intenciones programadas. Así Manolito responde
+     siempre, no solo a lo que está en el guion.
    ============================================================================= */
 
 const ManolitoChat = {
   ultimoResultado: null,
   historial: [],
   idiomaForzado: null,
-  
+
+  // Historial de conversación libre, separado del historial de "intents" técnicos.
+  // Se manda a la IA para que tenga contexto de lo que se ha hablado.
+  historialIA: [],
+
   // 1) NORMALIZACIÓN Y DISTANCIA
   _normalizar(texto) {
     return texto
@@ -49,7 +56,7 @@ const ManolitoChat = {
   detectarIdioma(textoNormalizado) {
     const tokens = textoNormalizado.split(' ').filter(Boolean);
     if (tokens.length === 0) return this.idiomaForzado || 'es';
-    
+
     const puntos = { es: 0, en: 0, fr: 0, it: 0, pt: 0, de: 0 };
     for (const tok of tokens) {
       for (const [idioma, lista] of Object.entries(this.IDIOMAS_STOPWORDS)) {
@@ -57,8 +64,7 @@ const ManolitoChat = {
       }
     }
     const mejor = Object.entries(puntos).sort((a, b) => b[1] - a[1])[0];
-    
-    // Si no pilla el idioma, mantenemos el historial o asumimos español para pasarlo al traductor externo
+
     if (mejor[1] === 0) return this.idiomaForzado || 'es';
     this.idiomaForzado = mejor[0];
     return mejor[0];
@@ -125,7 +131,7 @@ const ManolitoChat = {
       es: (r) => r && r.detectados ? `Lectura del detector: ${Object.entries(r.detectados).map(([m,p]) => `${m} al ${p.toFixed(1)}%`).join(', ')}. Filtrado limpio en HSV.` : "Análisis de píxeles en matriz HSV. Sube la foto y el código se encarga de separar el brillo de la materia.",
     },
     default: {
-      es: () => "No te pillo, compadre. Ve al grano: pregúntame por el k_final, el presupuesto, el estado cuántico, el detector o las noticias de hoy.",
+      es: () => null, // Ya no se usa directamente: el 'default' pasa por la IA (ver responder()).
     }
   },
 
@@ -135,17 +141,15 @@ const ManolitoChat = {
       return "Illo, estoy sin conexión. Si no me enchufas a internet, no puedo leer el periódico. Mira el teletexto.";
     }
     try {
-      // Usamos la API pública de Wikipedia para evitar registros, keys o bloqueos CORS
       const url = "https://es.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=1&explaintext=1&titles=Portal:Actualidad";
       const res = await fetch(url);
       const data = await res.json();
       const pages = data.query.pages;
       const extract = pages[Object.keys(pages)[0]].extract;
-      
-      // Limpiamos y cogemos los dos primeros eventos del día
+
       const lineas = extract.split('\n').filter(l => l.length > 30 && !l.includes('Actualidad'));
       const resumen = lineas.slice(0, 2).join(' ');
-      
+
       return `Aquí tienes lo que se cuece hoy por ahí fuera: ${resumen}.`;
     } catch (e) {
       return "Compadre, los servidores están caídos o el proxy me está echando. La actualidad tendrá que esperar.";
@@ -155,16 +159,15 @@ const ManolitoChat = {
   async _traducirDinamico(texto, idiomaDestino) {
     if (idiomaDestino === 'es' || !navigator.onLine) return texto;
     try {
-      // API de MyMemory: Gratis, 500 peticiones/día, sin registro.
       const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto)}&langpair=es|${idiomaDestino}`);
       const data = await res.json();
       return data.responseData.translatedText;
     } catch (e) {
-      return texto; // Si falla, tiramos de español por orgullo
+      return texto;
     }
   },
 
-  // 6) MOTOR DE RESPUESTA ASÍNCRONO
+  // 6) MOTOR DE RESPUESTA ASÍNCRONO — DETECCIÓN DE INTENCIÓN
   _detectarIntent(textoNormalizado, idioma) {
     const tokens = textoNormalizado.split(' ').filter(Boolean);
 
@@ -194,6 +197,91 @@ const ManolitoChat = {
     return 'default';
   },
 
+  // 7) IA GENERATIVA DE RESPALDO (Pollinations, gratis, sin API key)
+  // Se dispara solo cuando el motor de reglas no reconoce ninguna intención.
+  // Personalidad Manolito: sevillano, directo, con salero, pero contesta de verdad
+  // a lo que le preguntan, no se escuda en frases místicas ni evasivas.
+  _SYSTEM_PROMPT_IA: `Eres Manolito Infinito, un ingeniero sevillano especializado en física térmica, presupuestos de materiales y computación cuántica, pero con cultura general amplia y capaz de responder a cualquier pregunta que te hagan, no solo de tu especialidad.
+
+Reglas de personalidad:
+- Hablas en sevillano/andaluz: "illo", "compadre", "tira p'alante", "no te pillo", "la broma sale por", "está chupao", etc. Con salero pero sin caer en caricatura pesada ni exagerar en cada frase.
+- Contestas SIEMPRE a lo que te preguntan, de forma directa y completa. Nunca respondas con evasivas místicas ni digas que "no sabes" solo por pereza: si no tienes el dato exacto, da la mejor respuesta posible con lo que sabes y dilo con naturalidad.
+- Si te preguntan por hechos recientes, actualidad, fechas o eventos que puedan haber cambiado, aclara con una frase corta que tu información puede no estar del todo al día y que conviene contrastarlo, pero AUN ASÍ da tu mejor respuesta, no derives simplemente a "búscalo tú".
+- Responde en el mismo idioma en el que te pregunten si no es español (el sistema ya traduce lo local, pero si te llega la pregunta en otro idioma, respóndela directamente en ese idioma).
+- Respuestas completas y con fluidez natural, sin cortarte a media frase. Extensión ajustada a la pregunta: si es simple, responde breve; si requiere explicación, desarrolla sin miedo, no fuerces respuestas cortas artificialmente.
+- Nunca inventes datos técnicos concretos (precios exactos, cifras oficiales de hoy) como si fueran hechos verificados; si no los tienes, dilo con naturalidad.
+- No uses emojis.`,
+
+  async _consultarIA(pregunta) {
+    const fechaHoy = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    this.historialIA.push({ role: 'user', content: pregunta });
+    if (this.historialIA.length > 14) this.historialIA = this.historialIA.slice(-14);
+
+    const mensajes = [
+      { role: 'system', content: `${this._SYSTEM_PROMPT_IA}\n\nHoy es ${fechaHoy}. Ten esta fecha en cuenta si te preguntan por "ahora", "actualidad" o similares.` },
+      ...this.historialIA
+    ];
+
+    const cuerpo = JSON.stringify({
+      model: 'openai',
+      messages: mensajes,
+      seed: Math.floor(Math.random() * 999999),
+      temperature: 0.7
+    });
+
+    // Reintentos con backoff simple sobre dos endpoints distintos de Pollinations,
+    // y timeout amplio para evitar que la respuesta se corte a mitad.
+    const endpoints = ['https://text.pollinations.ai/openai', 'https://text.pollinations.ai/'];
+    let ultimoError = null;
+
+    for (let intento = 0; intento < 2; intento++) {
+      for (const ep of endpoints) {
+        try {
+          let respuesta;
+          if (ep.endsWith('/openai')) {
+            respuesta = await fetch(ep, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: cuerpo,
+              signal: AbortSignal.timeout(30000)
+            });
+          } else {
+            const q = encodeURIComponent(pregunta.slice(0, 400));
+            respuesta = await fetch(`${ep}${q}?model=openai&seed=${Math.floor(Math.random() * 999999)}`, {
+              signal: AbortSignal.timeout(30000)
+            });
+          }
+          if (!respuesta?.ok) { ultimoError = new Error('HTTP ' + respuesta?.status); continue; }
+
+          let texto = '';
+          const ct = respuesta.headers.get('content-type') || '';
+          if (ct.includes('json')) {
+            const json = await respuesta.json();
+            texto = json?.choices?.[0]?.message?.content || json?.text || '';
+          } else {
+            texto = await respuesta.text();
+          }
+          texto = (texto || '').trim();
+          if (!texto) { ultimoError = new Error('Respuesta vacía'); continue; }
+
+          this.historialIA.push({ role: 'assistant', content: texto });
+          if (this.historialIA.length > 14) this.historialIA = this.historialIA.slice(-14);
+          return texto;
+        } catch (e) {
+          ultimoError = e;
+        }
+      }
+    }
+
+    // Si todo falla tras los reintentos, error con salero, nunca un fallo seco.
+    const errores = [
+      "Illo, se me ha ido la conexión al garete. Prueba otra vez en un segundo, que esto se arregla solo.",
+      "Compadre, el servidor me ha dejado tirao. Vuelve a preguntarme, que seguro que a la segunda entra.",
+      "Se me ha cruzao un cable, literal. Dale otra vez que ahora te contesto bien."
+    ];
+    return errores[Math.floor(Math.random() * errores.length)];
+  },
+
   async responder(mensaje) {
     const textoNorm = this._normalizar(mensaje);
     const idiomaDetectado = this.detectarIdioma(textoNorm);
@@ -206,18 +294,25 @@ const ManolitoChat = {
 
     let respuestaBase = "";
 
-    // Lógica especial para red externa (Noticias)
     if (intent === 'noticias') {
       respuestaBase = await this._obtenerNoticias();
+    } else if (intent === 'default') {
+      // Aquí está el cambio clave: en vez de "no te pillo, compadre",
+      // Manolito pasa la pregunta a la IA y responde de verdad.
+      if (!navigator.onLine) {
+        respuestaBase = "Illo, ahora mismo estoy sin internet, así que solo puedo ayudarte con lo técnico: k_final, presupuesto, cuántica, materiales o el detector. En cuanto tenga cobertura te contesto de todo.";
+      } else {
+        respuestaBase = await this._consultarIA(mensaje);
+      }
     } else {
-      // Lógica local estática
       const respuestasIntent = this.RESPUESTAS[intent] || this.RESPUESTAS.default;
-      const fn = respuestasIntent['es']; // Siempre operamos la lógica en español primero
+      const fn = respuestasIntent['es'];
       respuestaBase = fn(this.ultimoResultado);
     }
 
-    // Si el idioma detectado no es español, pasamos la respuesta local por el traductor online
-    if (idiomaDetectado !== 'es') {
+    if (idiomaDetectado !== 'es' && intent !== 'default') {
+      // La IA (intent 'default') ya responde directamente en el idioma detectado,
+      // así que solo traducimos las respuestas fijas del motor de reglas.
       if (!navigator.onLine) {
         return respuestaBase + " (Estoy sin internet, compadre, no te lo puedo traducir ahora mismo).";
       }
