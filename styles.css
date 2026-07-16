@@ -105,6 +105,63 @@ header.hero {
   line-height: 1.55;
 }
 
+/* ---------- Navegacion por secciones ---------- */
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 22px;
+}
+.section-nav a {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  text-decoration: none;
+  padding-bottom: 3px;
+  border-bottom: 1px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.section-nav a:hover { color: var(--cold); border-color: var(--cold); }
+
+/* ---------- Seccion "Sobre el proyecto" ---------- */
+.about-panel { scroll-margin-top: 20px; }
+.about-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--text-main);
+  margin: 4px 0 16px;
+  text-transform: uppercase;
+}
+.about-sub {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--cold);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  margin: 26px 0 10px;
+  scroll-margin-top: 20px;
+}
+.about-text {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--text-mid);
+  max-width: 820px;
+}
+.about-text strong { color: var(--text-main); }
+.about-text em { color: var(--hot-2); font-style: normal; }
+.about-text a { color: var(--cold); }
+.about-list {
+  color: var(--text-mid);
+  font-size: 14.5px;
+  line-height: 1.7;
+  max-width: 820px;
+  padding-left: 20px;
+  margin: 10px 0;
+}
+.about-list strong { color: var(--text-main); }
+
 /* ---------- Layout de paneles ---------- */
 .grid-main {
   display: grid;
