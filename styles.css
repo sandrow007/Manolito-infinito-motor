@@ -376,3 +376,93 @@ footer {
   margin-top: 40px;
   letter-spacing: .04em;
 }
+
+footer a { color: var(--cold); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ---------- Banner de cookies ---------- */
+.cookie-banner {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: var(--bg-panel-2);
+  border-top: 1px solid var(--grid-line);
+  padding: 16px 20px;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  box-shadow: 0 -6px 24px rgba(0,0,0,.4);
+}
+.cookie-text {
+  font-size: 12.5px;
+  color: var(--text-mid);
+  max-width: 780px;
+  line-height: 1.5;
+}
+.cookie-text a { color: var(--cold); text-decoration: underline; cursor: pointer; }
+.cookie-actions { flex-shrink: 0; }
+
+/* ---------- Modal de privacidad / aviso legal ---------- */
+.legal-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(3,5,9,.8);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.legal-modal-overlay.open { display: flex; }
+.legal-modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--grid-line);
+  border-radius: 6px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 84vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+}
+.legal-modal h2 {
+  font-family: var(--font-display);
+  color: var(--text-main);
+  margin-top: 0;
+  text-transform: uppercase;
+}
+.legal-modal h3 {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--cold);
+  margin-top: 22px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.legal-modal p {
+  font-size: 13.5px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+.legal-modal code {
+  background: var(--bg-panel-2);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.legal-modal a { color: var(--cold); }
+.legal-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.legal-modal-close:hover { color: var(--hot); }
