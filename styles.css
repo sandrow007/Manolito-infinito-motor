@@ -1,5 +1,5 @@
 /* =============================================================================
-   MANOLITO INFINITO — IDENTIDAD VISUAL
+   Manolit∞ — IDENTIDAD VISUAL
    Concepto: plano de ingenieria / laboratorio de termodinamica industrial.
    Espectro termico (azul frio -> rojo incandescente) en vez de synthwave,
    para diferenciarse del resto de proyectos de Sandro.
@@ -383,7 +383,7 @@ input[type="checkbox"] { accent-color: var(--cold); width: 16px; height: 16px; }
 .qbar.state00 { background: var(--hot); }
 .qbar-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-top: 4px; }
 
-/* ---------- Chat Manolito ---------- */
+/* ---------- Chat Manolit∞ ---------- */
 .chat-window {
   height: 230px;
   overflow-y: auto;

@@ -1,4 +1,4 @@
-# Manolito Infinito — Motor Industrial Térmico-Cuántico
+# Manolit∞ — Motor Industrial Térmico-Cuántico
 
 Versión web del motor original en Python (Tkinter). Calcula la conductividad
 térmica ponderada (`k_final`) y el presupuesto de una mezcla de materiales,
