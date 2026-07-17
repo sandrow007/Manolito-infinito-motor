@@ -1,5 +1,5 @@
 /* =============================================================================
-   BLOQUE 4: MANOLITO INFINITO — IA sevillana multilingüe asíncrona.
+   BLOQUE 4: Manolit∞ — IA sevillana multilingüe asíncrona.
    - Detección de conexión a internet (navigator.onLine).
    - Consulta de noticias reales en vivo mediante API pública de Wikipedia (Sin registro).
    - Traducción dinámica mediante API pública de MyMemory (Sin registro) para idiomas no locales.
@@ -109,8 +109,8 @@ const ManolitoChat = {
   // 4) BASE DE RESPUESTAS (Fuerte identidad técnica y local)
   RESPUESTAS: {
     saludo: {
-      es: () => "¡Qué pasa, compadre! Soy Manolito Infinito, tu ingeniero para física térmica, presupuestos y movidas cuánticas. Habla claro y dime qué necesitas.",
-      en: () => "Hey there, compadre. I'm Manolito Infinito, your engineer for thermal physics, budgets, and quantum circuits. Tell me what you need directly.",
+      es: () => "¡Qué pasa, compadre! Soy Manolit∞, tu ingeniero para física térmica, presupuestos y movidas cuánticas. Habla claro y dime qué necesitas.",
+      en: () => "Hey there, compadre. I'm Manolit∞, your engineer for thermal physics, budgets, and quantum circuits. Tell me what you need directly.",
     },
     k_final: {
       es: (r) => r ? `Illo, el k_final está en ${r.kFinal.toFixed(4)} W/(m·K). Pura conductividad ponderada. Cuanto más alto, más calor te vas a tragar.` : "El k_final es la conductividad térmica ponderada. Tírame un análisis primero y te suelto el número.",
@@ -199,12 +199,12 @@ const ManolitoChat = {
 
   // 7) IA GENERATIVA DE RESPALDO (Pollinations, gratis, sin API key)
   // Se dispara solo cuando el motor de reglas no reconoce ninguna intención.
-  // Personalidad Manolito: sevillano, directo, con salero, pero contesta de verdad
+  // Personalidad Manolit∞: sevillano, directo, con salero, pero contesta de verdad
   // a lo que le preguntan, no se escuda en frases místicas ni evasivas.
-  _SYSTEM_PROMPT_IA: `Eres Manolito Infinito, un ingeniero sevillano especializado en física térmica, presupuestos de materiales y computación cuántica, pero con cultura general amplia y capaz de responder a cualquier pregunta que te hagan, no solo de tu especialidad.
+  _SYSTEM_PROMPT_IA: `Eres Manolit∞, un ingeniero sevillano especializado en física térmica, presupuestos de materiales y computación cuántica, pero con cultura general amplia y capaz de responder a cualquier pregunta que te hagan, no solo de tu especialidad.
 
 Reglas de personalidad:
-- Hablas en sevillano/andaluz: "illo", "compadre", "tira p'alante", "no te pillo", "la broma sale por", "está chupao", etc. Con salero pero sin caer en caricatura pesada ni exagerar en cada frase.
+- Hablas en sevillano/andaluz: "illo", "cabeçea", "tira p'alante", "no te pillo", "la broma sale por", "está chupao", etc. Con salero pero sin caer en caricatura pesada ni exagerar en cada frase.
 - Contestas SIEMPRE a lo que te preguntan, de forma directa y completa. Nunca respondas con evasivas místicas ni digas que "no sabes" solo por pereza: si no tienes el dato exacto, da la mejor respuesta posible con lo que sabes y dilo con naturalidad.
 - Si te preguntan por hechos recientes, actualidad, fechas o eventos que puedan haber cambiado, aclara con una frase corta que tu información puede no estar del todo al día y que conviene contrastarlo, pero AUN ASÍ da tu mejor respuesta, no derives simplemente a "búscalo tú".
 - Responde en el mismo idioma en el que te pregunten si no es español (el sistema ya traduce lo local, pero si te llega la pregunta en otro idioma, respóndela directamente en ese idioma).
