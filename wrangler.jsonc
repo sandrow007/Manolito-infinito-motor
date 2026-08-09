@@ -1,12 +1,19 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "manolito-infinito-motor",
   "compatibility_date": "2026-07-16",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "exclude": [
+      ".wrangler",
+      "node_modules",
+      "wrangler.jsonc",
+      "wrangler.json",
+      ".git",
+      ".gitignore"
+    ]
   },
   "compatibility_flags": [
     "nodejs_compat"
