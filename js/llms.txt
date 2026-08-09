@@ -1,9 +1,12 @@
-# name=llms.txt
-Format: WebMCP/1.0
-Site-Name: Manolit∞ — Motor Industrial Térmico-Cuántico
-Lang: es
-Sitemap: /sitemap.xml
-Allow: /
-Disallow: /private /node_modules
-Notes: 100% cliente; no APIs externas; previews served by client-side JS.
-Contact: mailto:sandro.a007@gmail.com
+# Manolit∞ — Motor Industrial Térmico-Cuántico
+> Herramienta ciudadana de simulación termofísica combinada con lógica de circuitos cuánticos para evaluar el impacto térmico de materiales urbanos.
+
+## Información del Proyecto
+- **Ubicación:** Sevilla, España.
+- **Autor:** Sandro (sandro.a007@gmail.com).
+- **Enfoque:** Análisis de conductividad térmica (Ley de Fourier) y mapeo probabilístico mediante un registro de 2 qubits (puertas RY y CNOT).
+
+## Recursos y Navegación
+- [Motor de Cálculo](https://manolito-infinito-motor.sandro-a007.workers.dev): Interfaz principal con el módulo termofísico, simulador cuántico y detector visual de materiales.
+- [Historia del Proyecto](https://manolito-infinito-motor.sandro-a007.workers.dev#historia): Contexto sobre el origen ciudadano y motivaciones del simulador.
+- [Contacto y Colaboración](https://manolito-infinito-motor.sandro-a007.workers.dev#contacto): Información para solicitar la versión profesional en Python conectada a hardware real de IBM Quantum.
