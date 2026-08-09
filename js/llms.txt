@@ -1,0 +1,9 @@
+# name=llms.txt
+Format: WebMCP/1.0
+Site-Name: Manolit∞ — Motor Industrial Térmico-Cuántico
+Lang: es
+Sitemap: /sitemap.xml
+Allow: /
+Disallow: /private /node_modules
+Notes: 100% cliente; no APIs externas; previews served by client-side JS.
+Contact: mailto:sandro.a007@gmail.com

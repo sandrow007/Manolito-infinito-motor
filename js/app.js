@@ -131,6 +131,8 @@ const App = {
     } else {
       const img = document.createElement('img');
       img.src = url;
+      img.alt = 'Preview de imagen subida para detección de materiales';
+      img.loading = 'lazy';
       img.style.maxWidth = '100%';
       img.style.borderRadius = '4px';
       document.getElementById('preview-container').appendChild(img);
