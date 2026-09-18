@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://manolito-infinito-motor.sandro-a007.workers.dev/sitemap.xml
